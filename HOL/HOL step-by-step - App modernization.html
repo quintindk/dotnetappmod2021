@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>App modernization hands-on lab step-by-step</title>
+        <style>
+</style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        <script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <p><img src="https://github.com/Microsoft/MCW-Template-Cloud-Workshop/raw/master/Media/ms-cloud-workshop.png" alt="Microsoft Cloud Workshops" title="Microsoft Cloud Workshops"></p>
+<div class="MCWHeader1">
+App modernization
+</div>
+<div class="MCWHeader2">
+Hands-on lab step-by-step guide
+</div>
+<div class="MCWHeader3">
+February 2020
+</div>
+<p>Information in this document, including URL and other Internet Web site references, is subject to change without notice. Unless otherwise noted, the example companies, organizations, products, domain names, e-mail addresses, logos, people, places, and events depicted herein are fictitious, and no association with any real company, organization, product, domain name, e-mail address, logo, person, place or event is intended or should be inferred. Complying with all applicable copyright laws is the responsibility of the user. Without limiting the rights under copyright, no part of this document may be reproduced, stored in or introduced into a retrieval system, or transmitted in any form or by any means (electronic, mechanical, photocopying, recording, or otherwise), or for any purpose, without the express written permission of Microsoft Corporation.</p>
+<p>Microsoft may have patents, patent applications, trademarks, copyrights, or other intellectual property rights covering subject matter in this document. Except as expressly provided in any written license agreement from Microsoft, the furnishing of this document does not give you any license to these patents, trademarks, copyrights, or other intellectual property.</p>
+<p>The names of manufacturers, products, or URLs are provided for informational purposes only and Microsoft makes no representations and warranties, either expressed, implied, or statutory, regarding these manufacturers or the use of the products with any Microsoft technologies. The inclusion of a manufacturer or product does not imply endorsement of Microsoft of the manufacturer or product. Links may be provided to third party sites. Such sites are not under the control of Microsoft and Microsoft is not responsible for the contents of any linked site or any link contained in a linked site, or any changes or updates to such sites. Microsoft is not responsible for webcasting or any other form of transmission received from any linked site. Microsoft is providing these links to you only as a convenience, and the inclusion of any link does not imply endorsement of Microsoft of the site or the products contained therein.</p>
+<p>© 2020 Microsoft Corporation. All rights reserved.</p>
+<p>Microsoft and the trademarks listed at <a href="https://www.microsoft.com/en-us/legal/intellectualproperty/Trademarks/Usage/General.aspx">https://www.microsoft.com/en-us/legal/intellectualproperty/Trademarks/Usage/General.aspx</a> are trademarks of the Microsoft group of companies. All other trademarks are property of their respective owners.</p>
+<p><strong>Contents</strong></p>
+<!-- TOC -->
+<ul>
+<li><a href="#app-modernization-hands-on-lab-step-by-step">App modernization hands-on lab step-by-step</a>
+<ul>
+<li><a href="#abstract-and-learning-objectives">Abstract and learning objectives</a></li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#solution-architecture">Solution architecture</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#exercise-1-migrate-the-on-premises-database-to-azure-sql-database">Exercise 1: Migrate the on-premises database to Azure SQL Database</a>
+<ul>
+<li><a href="#task-1-configure-the-contosoinsurance-database-on-the-sqlserver2008-vm">Task 1: Configure the ContosoInsurance database on the SqlServer2008 VM</a></li>
+<li><a href="#task-2-perform-assessment-for-migration-to-azure-sql-database">Task 2: Perform assessment for migration to Azure SQL Database</a></li>
+<li><a href="#task-3-migrate-the-database-schema-using-the-data-migration-assistant">Task 3: Migrate the database schema using the Data Migration Assistant</a></li>
+<li><a href="#task-4-retrieve-connection-information-for-sql-databases">Task 4: Retrieve connection information for SQL databases</a></li>
+<li><a href="#task-5-migrate-the-database-using-the-azure-database-migration-service">Task 5: Migrate the database using the Azure Database Migration Service</a></li>
+</ul>
+</li>
+<li><a href="#exercise-2-post-upgrade-database-enhancements">Exercise 2: Post upgrade database enhancements</a>
+<ul>
+<li><a href="#task-1-configure-sql-data-discovery-and-classification">Task 1: Configure SQL Data Discovery and Classification</a></li>
+<li><a href="#task-2-review-advanced-data-security-vulnerability-assessment">Task 2: Review Advanced Data Security Vulnerability Assessment</a></li>
+<li><a href="#task-3-enable-dynamic-data-masking">Task 3: Enable Dynamic Data Masking</a></li>
+</ul>
+</li>
+<li><a href="#exercise-3-configure-key-vault">Exercise 3: Configure Key Vault</a>
+<ul>
+<li><a href="#task-1-add-key-vault-access-policy">Task 1: Add Key Vault access policy</a></li>
+<li><a href="#task-2-create-a-new-secret-to-store-the-sql-connection-string">Task 2: Create a new secret to store the SQL connection string</a></li>
+<li><a href="#task-3-create-a-service-principal">Task 3: Create a service principal</a></li>
+<li><a href="#task-4-assign-the-service-principal-access-to-key-vault">Task 4: Assign the service principal access to Key Vault</a></li>
+</ul>
+</li>
+<li><a href="#exercise-4-deploy-web-api-into-azure-app-services">Exercise 4: Deploy Web API into Azure App Services</a>
+<ul>
+<li><a href="#task-1-connect-to-the-labvm">Task 1: Connect to the LabVM</a></li>
+<li><a href="#task-2-open-starter-solution-with-visual-studio">Task 2: Open starter solution with Visual Studio</a></li>
+<li><a href="#task-3-update-web-api-to-use-key-vault">Task 3: Update Web API to use Key Vault</a></li>
+<li><a href="#task-4-copy-keyvault-configuration-section-to-api-app-in-azure">Task 4: Copy KeyVault configuration section to API App in Azure</a></li>
+<li><a href="#task-5-deploy-the-api-to-azure">Task 5: Deploy the API to Azure</a></li>
+</ul>
+</li>
+<li><a href="#exercise-5-deploy-web-application-into-azure-app-services">Exercise 5: Deploy web application into Azure App Services</a>
+<ul>
+<li><a href="#task-1-add-api-app-url-to-web-app-application-settings">Task 1: Add API App URL to Web App Application settings</a></li>
+<li><a href="#task-2-deploy-web-application-to-azure">Task 2: Deploy web application to Azure</a></li>
+</ul>
+</li>
+<li><a href="#exercise-6-upload-policy-documents-into-blob-storage">Exercise 6: Upload policy documents into blob storage</a>
+<ul>
+<li><a href="#task-1-create-container-for-storing-pdfs-in-azure-storage">Task 1: Create container for storing PDFs in Azure storage</a></li>
+<li><a href="#task-2-create-a-sas-token">Task 2: Create a SAS token</a></li>
+<li><a href="#task-3-bulk-upload-pdfs-to-blob-storage-using-azcopy">Task 3: Bulk upload PDFs to blob storage using AzCopy</a></li>
+</ul>
+</li>
+<li><a href="#exercise-7-create-serverless-api-for-accessing-pdfs">Exercise 7: Create serverless API for accessing PDFs</a>
+<ul>
+<li><a href="#task-1-add-application-settings-to-your-function-app">Task 1: Add application settings to your Function App</a></li>
+<li><a href="#task-2-add-project-environment-variables">Task 2: Add project environment variables</a></li>
+<li><a href="#task-3-create-an-azure-function-in-visual-studio">Task 3: Create an Azure Function in Visual Studio</a></li>
+<li><a href="#task-4-test-the-function-locally">Task 4: Test the function locally</a></li>
+<li><a href="#task-5-deploy-the-function-to-your-azure-function-app">Task 5: Deploy the function to your Azure Function App</a></li>
+<li><a href="#task-6-enable-application-insights-on-the-function-app">Task 6: Enable Application Insights on the Function App</a></li>
+<li><a href="#task-7-add-function-app-url-to-your-web-app-application-settings">Task 7: Add Function App URL to your Web App Application settings</a></li>
+<li><a href="#task-8-test-document-retrieval-from-web-app">Task 8: Test document retrieval from web app</a></li>
+<li><a href="#task-9-view-live-metrics-stream">Task 9: View Live Metrics Stream</a></li>
+</ul>
+</li>
+<li><a href="#exercise-8-add-cognitive-search-for-policy-documents">Exercise 8: Add Cognitive Search for policy documents</a>
+<ul>
+<li><a href="#task-1-add-azure-cognitive-search-to-storage-account">Task 1: Add Azure Cognitive Search to Storage account</a></li>
+<li><a href="#task-2-review-search-results">Task 2: Review search results</a></li>
+</ul>
+</li>
+<li><a href="#exercise-9-import-and-publish-apis-into-apim">Exercise 9: Import and publish APIs into APIM</a>
+<ul>
+<li><a href="#task-1-import-api-app">Task 1: Import API App</a></li>
+<li><a href="#task-2-import-function-app">Task 2: Import Function App</a></li>
+<li><a href="#task-3-open-developer-portal-and-retrieve-you-api-key">Task 3: Open Developer Portal and retrieve you API key</a></li>
+<li><a href="#task-4-update-web-app-to-use-api-management-endpoints">Task 4: Update Web App to use API Management Endpoints</a></li>
+</ul>
+</li>
+<li><a href="#exercise-10-create-an-app-in-powerapps">Exercise 10: Create an app in PowerApps</a>
+<ul>
+<li><a href="#task-1-sign-up-for-a-powerapps-account">Task 1: Sign up for a PowerApps account</a></li>
+<li><a href="#task-2-create-new-sql-connection">Task 2: Create new SQL connection</a></li>
+<li><a href="#task-3-create-a-new-app">Task 3: Create a new app</a></li>
+<li><a href="#task-4-design-app">Task 4: Design app</a></li>
+<li><a href="#task-5-edit-the-app-settings-and-run-the-app">Task 5: Edit the app settings and run the app</a></li>
+</ul>
+</li>
+<li><a href="#after-the-hands-on-lab">After the hands-on lab</a>
+<ul>
+<li><a href="#task-1-delete-azure-resource-groups">Task 1: Delete Azure resource groups</a></li>
+<li><a href="#task-2-delete-the-contoso-apps-service-principal">Task 2: Delete the contoso-apps service principal</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h1 id="app-modernization-hands-on-lab-step-by-step">App modernization hands-on lab step-by-step</h1>
+<h2 id="abstract-and-learning-objectives">Abstract and learning objectives</h2>
+<p>In this hands-on lab, you implement the steps to modernize a legacy on-premises application, including upgrading and migrating the database to Azure and updating the application to take advantage of serverless and cloud services.</p>
+<p>At the end of this hands-on lab, your ability to build solutions for modernizing legacy on-premises applications and infrastructure using cloud services will be improved.</p>
+<h2 id="overview">Overview</h2>
+<p>Contoso, Ltd. (Contoso) is a new company in an old business. Founded in Auckland, NZ, in 2011, they provide a full range of long-term insurance services to help individuals who are under-insured, filling a void their founders saw in the market. From the beginning, they grew faster than anticipated and have struggled to cope with rapid growth. During their first year alone, they added over 100 new employees to keep up with the demand for their services. To manage policies and associated documentation, they use a custom-developed Windows Forms application, called PolicyConnect. PolicyConnect uses an on-premises SQL Server 2008 R2 database as its data store, along with a file server on its local area network for storing policy documents. That application and its underlying processes for managing policies have become increasingly overloaded.</p>
+<p>Contoso recently started a new web and mobile projects to allow policyholders, brokers, and employees to access policy information without requiring a VPN connection into the Contoso network. The web project is a new .NET Core 2.2 MVC web application, which accesses the PolicyConnect database using REST APIs. They eventually intend to share the REST APIs across all their applications, including the mobile app and WinForms version of PolicyConnect. They have a prototype of the web application running on-premises and are interested in taking their modernization efforts a step further by hosting the app in the cloud. However, they don't know how to take advantage of all the managed services of the cloud since they have no experience with it. They would like some direction converting what they have created so far into a more cloud-native application.</p>
+<p>They have not started the development of a mobile app yet. Contoso is looking for guidance on how to take a .NET developer-friendly approach to implement the PolicyConnect mobile app on Android and iOS.</p>
+<p>To prepare for hosting their applications in the cloud, they would like to migrate their SQL Server database to a PaaS SQL service in Azure. Contoso is hoping to take advantage of the advanced security features available in a fully-managed SQL service in the Azure. By migrating to the cloud, they hope to improve their technological capabilities and take advantage of enhancements and services that are enabled by moving to the cloud. The new features they would like to add are automated document forwarding from brokers, secure access for brokers, access to policy information, and reliable policy retrieval for a dispersed workforce. They have been clear that they will continue using the PolicyConnect WinForms application on-premises, but want to update the application to use cloud-based APIs and services. Additionally, they want to store policy documents in cloud storage for retrieval via the web and mobile apps.</p>
+<h2 id="solution-architecture">Solution architecture</h2>
+<p>Below is a high-level architecture diagram of the solution you implement in this hands-on lab. Please review this carefully, so you understand the whole of the solution as you are working on the various components.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/preferred-solution-architecture.png" alt="This solution diagram includes a high-level overview of the architecture implemented within this hands-on lab." title="Preferred Solution diagram"></p>
+<p>The solution begins with migrating Contoso's SQL Server 2008 R2 database to Azure SQL Database using the Azure Database Migration Service (DMS). Using the Data Migration Assistant (DMA) assessment, Contoso determined that they can migrate into a fully-managed SQL database service in Azure. The assessment revealed no compatibility issues or unsupported features that would prevent them from using Azure SQL Database. Next, they deploy the web and API apps into Azure App Services. Also, mobile apps, built for Android and iOS using Xamarin, are created to provide remote access to PolicyConnect. The website, hosted in a Web App, provides the user interface for browser-based clients, whereas the Xamarin Forms-based app provides the UI for mobile devices. Both the mobile app and website rely on web services hosted in a Function App, which sits behind API Management. An API App is also deployed to host APIs for the legacy Windows Forms desktop application. Light-weight, serverless APIs are provided by Azure Functions and Azure Functions Proxies to provide access to the database and policy documents stored in Blob Storage.</p>
+<p>Azure API Management is used to create an API Store for development teams and affiliated partners. Sensitive configuration data, like connection strings, are stored in Key Vault and accessed from the APIs or Web App on demand so that these settings never live in their file system. The API App implements the cache aside pattern using Azure Redis Cache. A full-text cognitive search pipeline is used to index policy documents in Blob Storage. Cognitive Services are used to enable search index enrichment using cognitive skills in Azure Search. PowerApps is used to enable authorized business users to build mobile and web create, read, update, delete (CRUD) applications. These apps interact with SQL Database and Azure Storage. Microsoft Flow enables them to orchestrations between services such as Office 365 email and services for sending mobile notifications. These orchestrations can be used independently of PowerApps or invoked by PowerApps to provide additional logic. The solution uses user and application identities maintained in Azure AD.</p>
+<blockquote>
+<p><strong>Note:</strong> The solution provided is only one of many possible, viable approaches.</p>
+</blockquote>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Microsoft Azure subscription must be pay-as-you-go or MSDN.
+<ul>
+<li>Trial subscriptions will not work.</li>
+</ul>
+</li>
+<li>A virtual machine configured with Visual Studio Community 2019 or higher (setup in the Before the hands-on lab exercises)</li>
+<li><strong>IMPORTANT</strong>: To complete this lab, you must have sufficient rights within your Azure AD tenant to:
+<ul>
+<li>Create an Azure Active Directory application and service principal</li>
+<li>Assign roles on your subscription</li>
+<li>Register resource providers</li>
+</ul>
+</li>
+</ul>
+<h2 id="exercise-1-migrate-the-on-premises-database-to-azure-sql-database">Exercise 1: Migrate the on-premises database to Azure SQL Database</h2>
+<p>Duration: 45 minutes</p>
+<p>In this exercise, you use the Microsoft Data Migration Assistant (DMA) to assess the <code>ContosoInsurance</code> database for a migration to Azure SQL Database. The assessment generates a report detailing any feature parity and compatibility issues between the on-premises database and Azure SQL Database.</p>
+<blockquote>
+<p>DMA helps you upgrade to a modern data platform by detecting compatibility issues that can impact database functionality on your new version of SQL Server or Azure SQL Database. DMA recommends performance and reliability improvements for your target environment and allows you to move your schema, data, and uncontained objects from your source server to your target server. To learn more, read the <a href="https://docs.microsoft.com/sql/dma/dma-overview?view=azuresqldb-mi-current">Data Migration Assistant documentation</a>.</p>
+</blockquote>
+<h3 id="task-1-configure-the-contosoinsurance-database-on-the-sqlserver2008-vm">Task 1: Configure the ContosoInsurance database on the SqlServer2008 VM</h3>
+<p>Before you begin the assessment, you need to configure the <code>ContosoInsurance</code> database on your SQL Server 2008 R2 instance. In this task, you execute a SQL script against the <code>ContosoInsurance</code> database on the SQL Server 2008 R2 instance.</p>
+<blockquote>
+<p><strong>Note</strong>: There is a known issue with screen resolution when using an RDP connection to Windows Server 2008 R2, which may affect some users. This issue presents itself as very small, hard to read text on the screen. The workaround for this is to use a second monitor for the RDP display, which should allow you to scale up the resolution to make the text larger.</p>
+</blockquote>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>SqlServer2008</strong> VM by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and selecting the <strong>SqlServer2008</strong> VM from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/resources-sql-server-2008-vm.png" alt="The SqlServer2008 virtual machine is highlighted in the list of resources." title="SQL Server 2008 VM"></p>
+</li>
+<li>
+<p>On the SqlServer2008 Virtual Machine's <strong>Overview</strong> blade, select <strong>Connect</strong> on the top menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/connect-sqlserver2008.png" alt="The SqlServer2008 VM blade is displayed, with the Connect button highlighted in the top menu." title="Connect to SqlServer2008 VM"></p>
+</li>
+<li>
+<p>On the Connect to virtual machine blade, select <strong>Download RDP File</strong>, then open the downloaded RDP file.</p>
+</li>
+<li>
+<p>Select <strong>Connect</strong> on the Remote Desktop Connection dialog.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/remote-desktop-connection-sql-2008.png" alt="In the Remote Desktop Connection Dialog Box, the Connect button is highlighted." title="Remote Desktop Connection dialog"></p>
+</li>
+<li>
+<p>Enter the following credentials when prompted, and then select <strong>OK</strong>:</p>
+<ul>
+<li><strong>Username</strong>: demouser</li>
+<li><strong>Password</strong>: Password.1!!</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/rdc-credentials-sql-2008.png" alt="The credentials specified above are entered into the Enter your credentials dialog." title="Enter your credentials"></p>
+</li>
+<li>
+<p>Select <strong>Yes</strong> to connect, if prompted that the identity of the remote computer cannot be verified.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/remote-desktop-connection-identity-verification-sqlserver2008.png" alt="In the Remote Desktop Connection dialog box, a warning states that the identity of the remote computer cannot be verified, and asks if you want to continue anyway. At the bottom, the Yes button is circled." title="Remote Desktop Connection dialog"></p>
+</li>
+<li>
+<p>Once logged into the SqlServer2008 VM, open <strong>Microsoft SQL Server Management Studio</strong> (SSMS) by entering &quot;sql server&quot; into the search bar in the Windows Start menu and selecting <strong>Microsoft SQL Server Management Studio 17</strong> from the results.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/start-menu-ssms-17.png" alt="SQL Server is entered into the Windows Start menu search box, and Microsoft SQL Server Management Studio 17 is highlighted in the search results." title="Windows start menu search"></p>
+</li>
+<li>
+<p>In the SSMS <strong>Connect to Server</strong> dialog, enter <strong>SQLSERVER2008</strong> into the Server name box, ensure <strong>Windows Authentication</strong> is selected, and then select <strong>Connect</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/sql-server-2008-connect-to-server.png" alt="The SQL Server Connect to Search dialog is displayed, with SQLSERVER2008 entered into the Server name and Windows Authentication selected." title="Connect to Server"></p>
+</li>
+<li>
+<p>Once connected, expand <strong>Databases</strong> under SQLSERVER2008 in the Object Explorer, and then select <strong>ContosoInsurance</strong> from the list of databases.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-databases.png" alt="The ContosoInsurance database is highlighted in the list of databases." title="Databases"></p>
+</li>
+<li>
+<p>Next, you execute a script in SSMS, which resets the <code>sa</code> password, enable mixed mode authentication, create the <code>WorkshopUser</code> account, and change the database recovery model to FULL. To create the script, open a new query window in SSMS by selecting <strong>New Query</strong> in the SSMS toolbar.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-new-query.png" alt="The New Query button is highlighted in the SSMS toolbar." title="SSMS Toolbar"></p>
+</li>
+<li>
+<p>Copy and paste the SQL script below into the new query window:</p>
+<pre><code class="language-sql"><div><span class="hljs-keyword">USE</span> <span class="hljs-keyword">master</span>;
+GO
+
+<span class="hljs-comment">-- SET the sa password</span>
+<span class="hljs-keyword">ALTER</span> LOGIN [sa] <span class="hljs-keyword">WITH</span> <span class="hljs-keyword">PASSWORD</span>=N<span class="hljs-string">&#x27;Password.1!!&#x27;</span>;
+GO
+
+<span class="hljs-comment">-- Enable Mixed Mode Authentication</span>
+EXEC xp_instance_regwrite N&#x27;HKEY_LOCAL_MACHINE&#x27;,
+N&#x27;Software\Microsoft\MSSQLServer\MSSQLServer&#x27;, N&#x27;LoginMode&#x27;, REG_DWORD, 2;
+GO
+
+<span class="hljs-comment">-- Create a login and user named WorkshopUser</span>
+<span class="hljs-keyword">CREATE</span> LOGIN WorkshopUser <span class="hljs-keyword">WITH</span> <span class="hljs-keyword">PASSWORD</span> = N<span class="hljs-string">&#x27;Password.1!!&#x27;</span>;
+GO
+
+EXEC sp_addsrvrolemember
+    @loginame = N&#x27;WorkshopUser&#x27;,
+    @rolename = N&#x27;sysadmin&#x27;;
+GO
+
+<span class="hljs-keyword">USE</span> ContosoInsurance;
+GO
+
+IF NOT EXISTS (<span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> sys.database_principals <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">name</span> = N<span class="hljs-string">&#x27;WorkshopUser&#x27;</span>)
+<span class="hljs-keyword">BEGIN</span>
+    <span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> [WorkshopUser] <span class="hljs-keyword">FOR</span> LOGIN [WorkshopUser]
+    EXEC sp_addrolemember N<span class="hljs-string">&#x27;db_datareader&#x27;</span>, N<span class="hljs-string">&#x27;WorkshopUser&#x27;</span>
+<span class="hljs-keyword">END</span>;
+GO
+
+<span class="hljs-comment">-- Update the recovery model of the database to FULL</span>
+<span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">DATABASE</span> ContosoInsurance <span class="hljs-keyword">SET</span> <span class="hljs-keyword">RECOVERY</span> <span class="hljs-keyword">FULL</span>;
+GO
+</div></code></pre>
+</li>
+<li>
+<p>To run the script, select <strong>Execute</strong> from the SSMS toolbar.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-execute.png" alt="The Execute button is highlighted in the SSMS toolbar." title="SSMS Toolbar"></p>
+</li>
+<li>
+<p>For Mixed Mode Authentication and the new <code>sa</code> password to take effect, you must restart the SQL Server (MSSQLSERVER) Service on the SqlServer2008 VM. To do this, you can use SSMS. Right-click the SQLSERVER2008 instance in the SSMS Object Explorer, and then select <strong>Restart</strong> from the context menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-object-explorer-restart-sqlserver2008.png" alt="In the SSMS Object Explorer, the context menu for the SQLSERVER2008 instance is displayed, and Restart is highlighted." title="Object Explorer"></p>
+</li>
+<li>
+<p>When prompted about restarting the MSSQLSERVER service, select <strong>Yes</strong>. The service takes a few seconds to restart.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-restart-service.png" alt="The Yes button is highlighted on the dialog asking if you are sure you want to restart the MSSQLSERVER service." title="Restart MSSQLSERVER service"></p>
+</li>
+</ol>
+<h3 id="task-2-perform-assessment-for-migration-to-azure-sql-database">Task 2: Perform assessment for migration to Azure SQL Database</h3>
+<p>Contoso would like an assessment to see what potential issues they might need to address in moving their database to Azure SQL Database. In this task, you use the <a href="https://docs.microsoft.com/sql/dma/dma-overview?view=sql-server-2017">Microsoft Data Migration Assistant</a> (DMA) to perform an assessment of the <code>ContosoInsurance</code> database against Azure SQL Database (Azure SQL DB). Data Migration Assistant (DMA) enables you to upgrade to a modern data platform by detecting compatibility issues that can impact database functionality on your new version of SQL Server or Azure SQL Database. It recommends performance and reliability improvements for your target environment. The assessment generates a report detailing any feature parity and compatibility issues between the on-premises database and the Azure SQL DB service.</p>
+<blockquote>
+<p><strong>Note</strong>: The Database Migration Assistant has already been installed on your SqlServer2008 VM. It can also be downloaded from the <a href="https://www.microsoft.com/download/details.aspx?id=53595">Microsoft Download Center</a>.</p>
+</blockquote>
+<ol>
+<li>
+<p>On the SqlServer2008 VM, launch DMA from the Windows Start menu by typing &quot;data migration&quot; into the search bar, and then selecting <strong>Microsoft Data Migration Assistant</strong> in the search results.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/windows-start-menu-dma.png" alt="In the Windows Start menu, &quot;data migration&quot; is entered into the search bar, and Microsoft Data Migration Assistant is highlighted in the Windows start menu search results." title="Data Migration Assistant"></p>
+</li>
+<li>
+<p>In the DMA dialog, select <strong>+</strong> from the left-hand menu to create a new project.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dma-new.png" alt="The new project icon is highlighted in DMA." title="New DMA project"></p>
+</li>
+<li>
+<p>In the New project pane, set the following:</p>
+<ul>
+<li><strong>Project type</strong>: Select Assessment.</li>
+<li><strong>Project name</strong>: Enter Assessment.</li>
+<li><strong>Assessment type</strong>: Select Database Engine.</li>
+<li><strong>Source server type</strong>: Select SQL Server.</li>
+<li><strong>Target server type</strong>: Select Azure SQL Database.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dma-new-project-to-azure-sql-db.png" alt="New project settings for doing an assessment of a migration from SQL Server to Azure SQL Database." title="New project settings"></p>
+</li>
+<li>
+<p>Select <strong>Create</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Options</strong> screen, ensure <strong>Check database compatibility</strong> and <strong>Check feature parity</strong> are both checked, and then select <strong>Next</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dma-options.png" alt="Check database compatibility and check feature parity are checked on the Options screen." title="DMA options"></p>
+</li>
+<li>
+<p>On the <strong>Sources</strong> screen, enter the following into the <strong>Connect to a server</strong> dialog that appears on the right-hand side:</p>
+<ul>
+<li><strong>Server name</strong>: Enter <strong>SQLSERVER2008</strong>.</li>
+<li><strong>Authentication type</strong>: Select <strong>SQL Server Authentication</strong>.</li>
+<li><strong>Username</strong>: Enter <strong>WorkshopUser</strong></li>
+<li><strong>Password</strong>: Enter <strong>Password.1!!</strong></li>
+<li><strong>Encrypt connection</strong>: Check this box.</li>
+<li><strong>Trust server certificate</strong>: Check this box.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dma-connect-to-a-server.png" alt="In the Connect to a server dialog, the values specified above are entered into the appropriate fields." title="Connect to a server"></p>
+</li>
+<li>
+<p>Select <strong>Connect</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Add sources</strong> dialog that appears next, check the box for <code>ContosoInsurance</code> and select <strong>Add</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dma-add-sources.png" alt="The ContosoInsurance box is checked on the Add sources dialog." title="Add sources"></p>
+</li>
+<li>
+<p>Select <strong>Start Assessment</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dma-start-assessment-to-azure-sql-db.png" alt="Start assessment" title="Start assessment"></p>
+</li>
+<li>
+<p>Take a moment to review the assessment for migrating to Azure SQL DB. The SQL Server feature parity report shows that Analysis Services and SQL Server Reporting Services are unsupported, but these do not affect any objects in the <code>ContosoInsurance</code> database, so won't block a migration.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dma-feature-parity-report.png" alt="The feature parity report is displayed, and the two unsupported features are highlighted." title="Feature parity"></p>
+</li>
+<li>
+<p>Now, select <strong>Compatibility issues</strong> so you can review that report as well.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dma-compatibility-issues.png" alt="The Compatibility issues option is selected and highlighted." title="Compatibility issues"></p>
+</li>
+</ol>
+<blockquote>
+<p>The DMA assessment for a migrating the <code>ContosoInsurance</code> database to a target platform of Azure SQL DB reveals that there are no issues or features preventing Contoso from migrating their database to Azure SQL DB. You can select <strong>Export Assessment</strong> at the top right to save the report as a JSON file, if desired.</p>
+</blockquote>
+<h3 id="task-3-migrate-the-database-schema-using-the-data-migration-assistant">Task 3: Migrate the database schema using the Data Migration Assistant</h3>
+<p>After you have reviewed the assessment results and you have ensured the database is a candidate for migration to Azure SQL Database, use the Data Migration Assistant to migrate the schema to Azure SQL Database.</p>
+<ol>
+<li>
+<p>On the SqlServer2008 VM, return to the Data Migration Assistant, and select the New <strong>(+)</strong> icon in the left-hand menu.</p>
+</li>
+<li>
+<p>In the New project dialog, enter the following:</p>
+<ul>
+<li><strong>Project type</strong>: Select Migration.</li>
+<li><strong>Project name</strong>: Enter Migration.</li>
+<li><strong>Source server type</strong>: Select SQL Server.</li>
+<li><strong>Target server type</strong>: Select Azure SQL Database.</li>
+<li><strong>Migration scope</strong>: Select Schema only.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/data-migration-assistant-new-project-migration.png" alt="The above information is entered in the New project dialog box." title="New Project dialog"></p>
+</li>
+<li>
+<p>Select <strong>Create</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Select source</strong> tab, enter the following:</p>
+<ul>
+<li><strong>Server name</strong>: Enter <strong>SQLSERVER2008</strong>.</li>
+<li><strong>Authentication type</strong>: Select <strong>SQL Server Authentication</strong>.</li>
+<li><strong>Username</strong>: Enter <strong>WorkshopUser</strong></li>
+<li><strong>Password</strong>: Enter <strong>Password.1!!</strong></li>
+<li><strong>Encrypt connection</strong>: Check this box.</li>
+<li><strong>Trust server certificate</strong>: Check this box.</li>
+<li>Select <strong>Connect</strong>, and then ensure the <code>ContosoInsurance</code> database is selected from the list of databases.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/data-migration-assistant-migration-select-source.png" alt="The Select source tab of the Data Migration Assistant is displayed, with the values specified above entered into the appropriate fields." title="Data Migration Assistant Select source"></p>
+</li>
+<li>
+<p>Select <strong>Next</strong>.</p>
+</li>
+<li>
+<p>For the <strong>Select target</strong> tab, retrieve the server name associated with your Azure SQL Database. In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>SQL database</strong> resource by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>ContosoInsurance</strong> SQL database resource from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/resources-azure-sql-database.png" alt="The contosoinsurance SQL database resource is highlighted in the list of resources." title="SQL database"></p>
+</li>
+<li>
+<p>On the Overview blade of your SQL database, copy the <strong>Server name</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/sql-database-server-name.png" alt="The server name value is highlighted on the SQL database Overview blade." title="SQL database"></p>
+</li>
+<li>
+<p>Return to DMA, and on the <strong>Select target</strong> tab, enter the following:</p>
+<ul>
+<li><strong>Server name</strong>: Paste the server name of your Azure SQL Database you copied above.</li>
+<li><strong>Authentication type</strong>: Select SQL Server Authentication.</li>
+<li><strong>Username</strong>: Enter <strong>demouser</strong></li>
+<li><strong>Password</strong>: Enter <strong>Password.1!!</strong></li>
+<li><strong>Encrypt connection</strong>: Check this box.</li>
+<li><strong>Trust server certificate</strong>: Check this box.</li>
+<li>Select <strong>Connect</strong>, and then ensure the <code>ContosoInsurance</code> database is selected from the list of databases.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/data-migration-assistant-migration-select-target.png" alt="The Select target tab of the Data Migration Assistant is displayed, with the values specified above entered into the appropriate fields." title="Data Migration Assistant Select target"></p>
+</li>
+<li>
+<p>Select <strong>Next</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Select objects</strong> tab, leave all the objects checked, and select <strong>Generate SQL script</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/data-migration-assistant-migration-select-objects.png" alt="The Select objects tab of the Data Migration Assistant is displayed, with all the objects checked." title="Data Migration Assistant Select target"></p>
+</li>
+<li>
+<p>On the <strong>Script &amp; deploy schema</strong> tab, review the script. Notice the view also provides a note that there are not blocking issues.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/data-migration-assistant-migration-script-and-deploy-schema.png" alt="The Script &amp; deploy schema tab of the Data Migration Assistant is displayed, with the generated script shown." title="Data Migration Assistant Script &amp; deploy schema"></p>
+</li>
+<li>
+<p>Select <strong>Deploy schema</strong>.</p>
+</li>
+<li>
+<p>After the schema is deployed, review the deployment results, and ensure there were no errors.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/data-migration-assistant-migration-deployment-results.png" alt="The schema deployment results are displayed, with 23 commands executed and 0 errors highlighted." title="Schema deployment results"></p>
+</li>
+<li>
+<p>Next, open SSMS on the SqlServer2008 VM, and connect to your Azure SQL Database, by selecting <strong>Connect-&gt;Database Engine</strong> in the Object Explorer, and then entering the following into the Connect to server dialog:</p>
+<ul>
+<li><strong>Server name</strong>: Paste the server name of your Azure SQL Database you copied above.</li>
+<li><strong>Authentication type</strong>: Select SQL Server Authentication.</li>
+<li><strong>Username</strong>: Enter <strong>demouser</strong></li>
+<li><strong>Password</strong>: Enter <strong>Password.1!!</strong></li>
+<li><strong>Remember password</strong>: Check this box.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-connect-azure-sql-database.png" alt="The SSMS Connect to Server dialog is displayed, with the Azure SQL Database name specified, SQL Server Authentication selected, and the demouser credentials entered." title="Connect to Server"></p>
+</li>
+<li>
+<p>Select <strong>Connect</strong>.</p>
+</li>
+<li>
+<p>Once connected, expand <strong>Databases</strong>, and expand <strong>ContosoInsurance</strong>, then expand <strong>Tables</strong>, and observe the schema has been created.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-databases-contosoinsurance-tables.png" alt="In the SSMS Object Explorer, Databases, ContosoInsurance, and Tables are expanded, showing the tables created by the deploy schema script." title="SSMS Object Explorer"></p>
+</li>
+</ol>
+<h3 id="task-4-retrieve-connection-information-for-sql-databases">Task 4: Retrieve connection information for SQL databases</h3>
+<p>In this task, you use the Azure Cloud shell to retrieve the IP address of the SqlServer2008 VM, which is needed to connect to your SqlServer2008 VM from DMS.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, select the Azure Cloud Shell icon from the top menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-icon.png" alt="The Azure Cloud Shell icon is highlighted in the Azure portal's top menu." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>In the Cloud Shell window that opens at the bottom of your browser window, select <strong>PowerShell</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-select-powershell.png" alt="In the Welcome to Azure Cloud Shell window, PowerShell is highlighted." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>If prompted that you have no storage mounted, select the subscription you are using for this hands-on lab and select <strong>Create storage</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-create-storage.png" alt="In the You have no storage mounted dialog, a subscription has been selected, and the Create Storage button is highlighted." title="Azure Cloud Shell"></p>
+<blockquote>
+<p><strong>Note</strong>: If creation fails, you may need to select <strong>Advanced settings</strong> and specify the subscription, region and resource group for the new storage account.</p>
+</blockquote>
+</li>
+<li>
+<p>After a moment, a message that you have successfully requested a Cloud Shell appears, and a PS Azure prompt is displayed.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-ps-azure-prompt.png" alt="In the Azure Cloud Shell dialog, a message is displayed that requesting a Cloud Shell succeeded, and the PS Azure prompt is displayed." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>At the prompt, enter the following command, <strong>replacing <code>&lt;your-resource-group-name&gt;</code></strong> with the name resource group:</p>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$resourceGroup</span> = <span class="hljs-string">&quot;&lt;your-resource-group-name&gt;&quot;</span>
+</div></code></pre>
+</li>
+<li>
+<p>Next, retrieve the public IP address of the SqlServer2008 VM, which is used to connect to the database on that server. Enter and run the following PowerShell command:</p>
+<pre><code class="language-powershell"><div>az vm list<span class="hljs-literal">-ip</span><span class="hljs-literal">-addresses</span> <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> <span class="hljs-literal">-n</span> SqlServer2008 -<span class="hljs-literal">-output</span> table
+</div></code></pre>
+<blockquote>
+<p><strong>Note</strong>: If you have multiple Azure subscriptions, and the account you are using for this hands-on lab is not your default account, you may need to run <code>az account list --output table</code> at the Azure Cloud Shell prompt to output a list of your subscriptions, then copy the Subscription Id of the account you are using for this lab, and then run <code>az account set --subscription &lt;your-subscription-id&gt;</code> to set the appropriate account for the Azure CLI commands.</p>
+</blockquote>
+</li>
+<li>
+<p>Within the output of the command above, locate and copy the value of the <code>ipAddress</code> property within the <code>publicIPAddresses</code> object. Paste the value into a text editor, such as Notepad.exe, for later reference.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-az-vm-list-ip-addresses.png" alt="The output from the az vm list-ip-addresses command is displayed in the Cloud Shell, and the publicIpAddress for the SqlServer2008 VM is highlighted." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>Next, run a second command to retrieve the server name of your Azure SQL Database:</p>
+<pre><code class="language-powershell"><div>az sql server list <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span>
+</div></code></pre>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-az-sql-server-list.png" alt="The output from the az sql server list command is displayed in the Cloud Shell, and the fullyQualifiedDomainName for the server is highlighted." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>Copy the <strong>fullyQualifiedDomainName</strong> value into a text editor for use below.</p>
+</li>
+</ol>
+<h3 id="task-5-migrate-the-database-using-the-azure-database-migration-service">Task 5: Migrate the database using the Azure Database Migration Service</h3>
+<p>At this point, you have migrated the database schema using DMA. In this task, you migrate the data from the <code>ContosoInsurance</code> database into the new Azure SQL Database using the Azure Database Migration Service.</p>
+<blockquote>
+<p>The <a href="https://docs.microsoft.com/azure/dms/dms-overview">Azure Database Migration Service</a> integrates some of the functionality of Microsoft existing tools and services to provide customers with a comprehensive, highly available database migration solution. The service uses the Data Migration Assistant to generate assessment reports that provide recommendations to guide you through the changes required prior to performing a migration. When you're ready to begin the migration process, Azure Database Migration Service performs all of the required steps.</p>
+</blockquote>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your Azure Database Migration Service by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>contoso-dms-UniqueId</strong> Azure Database Migration Service in the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/resource-group-dms-resource.png" alt="The contoso-dms Azure Database Migration Service is highlighted in the list of resources in the hands-on-lab-SUFFIX resource group." title="Resources"></p>
+</li>
+<li>
+<p>On the Azure Database Migration Service blade, select <strong>+New Migration Project</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-add-new-migration-project.png" alt="On the Azure Database Migration Service blade, +New Migration Project is highlighted in the toolbar." title="Azure Database Migration Service New Project"></p>
+</li>
+<li>
+<p>On the New migration project blade, enter the following:</p>
+<ul>
+<li><strong>Project name</strong>: Enter DataMigration.</li>
+<li><strong>Source server type</strong>: Select SQL Server.</li>
+<li><strong>Target server type</strong>: Select Azure SQL Database.</li>
+<li><strong>Choose type of activity</strong>: Select <strong>Offline data migration</strong> and select <strong>Save</strong>.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-new-migration-project-blade.png" alt="The New migration project blade is displayed, with the values specified above entered into the appropriate fields." title="New migration project"></p>
+</li>
+<li>
+<p>Select <strong>Create and run activity</strong>.</p>
+</li>
+<li>
+<p>On the Migration Wizard <strong>Select source</strong> blade, enter the following:</p>
+<ul>
+<li><strong>Source SQL Server instance name</strong>: Enter the IP address of your SqlServer2008 VM that you copied into a text editor in the previous task. For example, <code>51.143.12.114</code>.</li>
+<li><strong>Authentication type</strong>: Select SQL Authentication.</li>
+<li><strong>Username</strong>: Enter <strong>WorkshopUser</strong></li>
+<li><strong>Password</strong>: Enter <strong>Password.1!!</strong></li>
+<li><strong>Connection properties</strong>: Check both Encrypt connection and Trust server certificate.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-select-source.png" alt="The Migration Wizard Select source blade is displayed, with the values specified above entered into the appropriate fields." title="Migration Wizard Select source"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong>.</p>
+</li>
+<li>
+<p>On the Migration Wizard <strong>Select target</strong> blade, enter the following:</p>
+<ul>
+<li><strong>Target server name</strong>: Enter the <code>fullyQualifiedDomainName</code> value of your Azure SQL Database (e.g., <a href="http://contosoinsurance-jt7yc3zphxfda.database.windows.net">contosoinsurance-jt7yc3zphxfda.database.windows.net</a>), which you copied in the previous task.</li>
+<li><strong>Authentication type</strong>: Select SQL Authentication.</li>
+<li><strong>Username</strong>: Enter <strong>demouser</strong></li>
+<li><strong>Password</strong>: Enter <strong>Password.1!!</strong></li>
+<li><strong>Connection properties</strong>: Check Encrypt connection.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-select-target.png" alt="The Migration Wizard Select target blade is displayed, with the values specified above entered into the appropriate fields." title="Migration Wizard Select target"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong>.</p>
+</li>
+<li>
+<p>On the Migration Wizard <strong>Map to target databases</strong> blade, confirm that <strong>ContosoInsurance</strong> is checked as the source database, and that it is also the target database on the same line, then select <strong>Save</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-map-to-target-databases.png" alt="The Migration Wizard Map to target database blade is displayed, with the ContosoInsurance line highlighted." title="Migration Wizard Map to target databases"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong>.</p>
+</li>
+<li>
+<p>On the Migration Wizard <strong>Configure migration settings</strong> blade, expand the <strong>ContosoInsurance</strong> database and verify all the tables are selected.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-configure-migration-settings.png" alt="The Migration Wizard Configure migration settings blade is displayed, with the expand arrow for ContosoInsurance highlighted, and all the tables checked." title="Migration Wizard Configure migration settings"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong>.</p>
+</li>
+<li>
+<p>On the Migration Wizard <strong>Summary</strong> blade, enter the following:</p>
+<ul>
+<li><strong>Activity name</strong>: Enter ContosoDataMigration.</li>
+<li><strong>Validation option</strong>: Select Validate my database(s), check all three Validation options, and then select <strong>Save</strong>.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-migration-summary.png" alt="The Migration Wizard summary blade is displayed, ContosoDataMigration is entered into the name field, and Validate my database(s) is selected in the Choose validation option blade, with all three validation options selected." title="Migration Wizard Summary"></p>
+</li>
+<li>
+<p>Select <strong>Run migration</strong>.</p>
+</li>
+<li>
+<p>Monitor the migration on the status screen that appears. Select the refresh icon in the toolbar to retrieve the latest status.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-status-running.png" alt="On the Migration job blade, the Refresh button is highlighted, and a status of Full backup uploading is displayed and highlighted." title="Migration status"></p>
+<blockquote>
+<p>The migration takes approximately 2 - 3 minutes to complete.</p>
+</blockquote>
+</li>
+<li>
+<p>When the migration is complete, you should see the status as <strong>Completed</strong>, but may also see a status of <strong>Warning</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-status-complete.png" alt="On the Migration job blade, the status of Completed is highlighted." title="Migration with Completed status"></p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-status-warning.png" alt="On the Migration job blade, the status of Completed is highlighted." title="Migration with Warning status"></p>
+</li>
+<li>
+<p>When the migration is complete, select the ellipsis button on the toolbar, and then select <strong>Download report</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-download-report.png" alt="The download report button is highlighted in the toolbar menu." title="Download report"></p>
+</li>
+<li>
+<p>Review the database migration report. If you received a status of &quot;Warning&quot; for your migration, you can find the reason in the Validation Summary section. In the report below, you can see that a storage object schema difference triggered a warning. However, the report also reveals that everything was migrated successfully.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dms-migration-wizard-report.png" alt="The output of the database migration report is displayed." title="Database migration report"></p>
+</li>
+</ol>
+<h2 id="exercise-2-post-upgrade-database-enhancements">Exercise 2: Post upgrade database enhancements</h2>
+<p>Duration: 30 minutes</p>
+<p>In this exercise you explore some of the security features of Azure SQL Database, and review some of the security benefits that come with running your database in Azure. <a href="https://docs.microsoft.com/azure/sql-database/sql-database-advanced-data-security">SQL Database Advance Data Security</a> (ADS) provides advanced SQL security capabilities, including functionality for discovering and classifying sensitive data, surfacing and mitigating potential database vulnerabilities, and detecting anomalous activities that could indicate a threat to your database.</p>
+<blockquote>
+<p><strong>Note</strong>: Advanced Data Security was enabled on the database with the ARM template, so you do not need to do that here.</p>
+</blockquote>
+<h3 id="task-1-configure-sql-data-discovery-and-classification">Task 1: Configure SQL Data Discovery and Classification</h3>
+<p>In this task, you look at the <a href="https://docs.microsoft.com/sql/relational-databases/security/sql-data-discovery-and-classification?view=sql-server-2017">SQL Data Discovery and Classification</a> feature of Advanced Data Security. Data Discovery &amp; Classification introduces a new tool for discovering, classifying, labeling &amp; reporting the sensitive data in your databases. It introduces a set of advanced services, forming a new SQL Information Protection paradigm aimed at protecting the data in your database, not just the database. Discovering and classifying your most sensitive data (business, financial, healthcare, etc.) can play a pivotal role in your organizational information protection stature.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>SQL database</strong> resource by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>ContosoInsurance</strong> SQL database resource from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/resources-azure-sql-database.png" alt="The contosoinsurance SQL database resource is highlighted in the list of resources." title="SQL database"></p>
+</li>
+<li>
+<p>On the SQL database blade, select <strong>Advance Data Security</strong> from the left-hand menu, and then select the <strong>Data Discovery &amp; Classification</strong> tile.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e2-03.png" alt="Advanced Data Security is highlighted in the menu. Data Discovery &amp; Classification option is highlighted to select." title="Advance Data Security"></p>
+</li>
+<li>
+<p>On the <strong>Data Discovery &amp; Classification</strong> blade, select the info link with the message <strong>We have found 7 columns with classification recommendations</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ads-data-discovery-and-classification-recommendations-link.png" alt="The recommendations link on the Data Discovery &amp; Classification blade is highlighted." title="Data Discovery &amp; Classification"></p>
+</li>
+<li>
+<p>The classification engine scans the database and provides a list of recommended column classifications. Look over the list of recommendations to get a better understanding of the types of data and classifications are assigned, based on the built-in classification settings. In the list of classification recommendations, note the recommended classification for the <strong>dbo - people - DOB</strong> field (Confidential - GDPR).</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ads-data-discovery-and-classification-recommendations-dob.png" alt="The DOB recommendation is highlighted in the recommendations list." title="Data Discovery &amp; Classification"></p>
+</li>
+<li>
+<p>Contoso is very concerned about the potential cost of any GDPR violations, and would like to label any GDPR fields as <em>Highly Confidential - GDPR</em>. To update this, select <strong>+ Add classification</strong> in the Data Discovery &amp; Classification toolbar.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ads-data-discovery-and-classification-add-classification.png" alt="The +Add classification button is highlighted in the toolbar." title="Data Discovery &amp; Classification"></p>
+</li>
+<li>
+<p>In the Add classification dialog, quickly expand the <strong>Sensitivity label</strong> field, and review the various built-in labels you can choose from. You can also add your own labels, should you desire.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ads-data-discovery-and-classification-sensitivity-labels.png" alt="The list of built-in Sensitivity labels is displayed." title="Data Discovery &amp; Classification"></p>
+</li>
+<li>
+<p>In the Add classification dialog, enter the following:</p>
+<ul>
+<li><strong>Schema name</strong>: Select dbo.</li>
+<li><strong>Table name</strong>: Select people.</li>
+<li><strong>Column name</strong>: Select DOB (date).</li>
+<li><strong>Information type</strong>: Select Date Of Birth.</li>
+<li><strong>Sensitivity level</strong>: Select Highly Confidential - GDPR.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ads-data-discovery-and-classification-add-dob-classification.png" alt="The values specified above are entered into the Add classification dialog." title="Add classification"></p>
+</li>
+<li>
+<p>Select <strong>Add classification</strong>.</p>
+</li>
+<li>
+<p>After adding the new classification, the <strong>dbo - people - DOB</strong> field disappears from the recommendations list, and the number of recommendations drop by 1.</p>
+</li>
+<li>
+<p>Select <strong>Save</strong> on the toolbar to save the changes.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ads-data-discovery-and-classification-save.png" alt="The Save button is highlighted on the Data Discovery &amp; Classification toolbar." title="Save"></p>
+</li>
+<li>
+<p>To accept the remaining recommendations, you can check the <strong>Select all</strong> option and then select <strong>Accept selected recommendations</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e2-05.png" alt="Classification tab on Data Discovery &amp; Classification window showing a list of classification recommendations for ContosoInsurance database. Select all checkbox is highlighted and selected. Accept selected recommendations button is highlighted." title="Accept selected recommendations"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong> on the toolbar to save the changes.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ads-data-discovery-and-classification-save.png" alt="The Save button is highlighted on the Data Discovery &amp; Classification toolbar." title="Save"></p>
+</li>
+<li>
+<p>When the save completes, select the <strong>Overview</strong> tab on the Data Discovery &amp; Classification blade to view a report with a full summary of the database classification state.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ads-data-discovery-and-classification-overview.png" alt="The overview dashboard is displayed." title="Overview report"></p>
+</li>
+</ol>
+<h3 id="task-2-review-advanced-data-security-vulnerability-assessment">Task 2: Review Advanced Data Security Vulnerability Assessment</h3>
+<p>In this task, you review an assessment report generated by ADS for the <code>ContosoInsurance</code> database. The <a href="https://docs.microsoft.com/azure/sql-database/sql-vulnerability-assessment">SQL Vulnerability Assessment service</a> is a service that provides visibility into your security state, and includes actionable steps to resolve security issues, and enhance your database security.</p>
+<ol>
+<li>
+<p>Return to the <strong>Advanced Data Security</strong> blade for the <code>ContosoInsurance</code> SQL database and then select the <strong>Vulnerability Assessment</strong> tile.</p>
+</li>
+<li>
+<p>Navigate to <strong>Advance Data Security</strong> on the <strong>Security</strong> section of your Azure SQL Database.</p>
+</li>
+<li>
+<p>Select <strong>Vulnerability Assessment</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e2-06.png" alt="ContosoInsurance Azure SQL database into Azure Portal. Advanced Data Security is highlighted in the menu. Vulnerability Assessment section is highlighted" title="Vulnerability Assessment"></p>
+</li>
+<li>
+<p>On the Vulnerability Assessment blade, select <strong>Scan</strong> on the toolbar.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e2-07.png" alt="Vulnerability Assessment window with Scan Option highlighted" title="Scan Option"></p>
+</li>
+<li>
+<p>When the scan completes, select the <strong>Overview</strong> tab and observe the dashboard, which displays the number of failing checks, passing checks, and a breakdown of the risk summary by severity level.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e2-08.png" alt="Vulnerability Assessment window with the assessment results" title="Vulnerability Assessment results"></p>
+</li>
+<li>
+<p>In the scan results, take a few minutes to browse both the Failed and Passed checks, and review the types of checks that are performed. In the <strong>Failed</strong> the list, select any of the failed checks to view the detailed description.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vulnerability-assessment-failed-va1143-details.png" alt="The details of the VA1143 - Transparent data encryption should be enabled finding are displayed with the description, impact, and remediation fields highlighted." title="Vulnerability Assessment"></p>
+<blockquote>
+<p>The details for each finding provide more insight into the reason for the finding. Of note are the fields describing the finding, the impact of the recommended settings, and details on how to remediate the finding.</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="task-3-enable-dynamic-data-masking">Task 3: Enable Dynamic Data Masking</h3>
+<p>In this task, you enable <a href="https://docs.microsoft.com/sql/relational-databases/security/dynamic-data-masking?view=sql-server-ver15">Dynamic Data Masking</a> (DDM) into your Azure SQL Database to limit access to sensitive data in the database through query results. This feature helps prevent unauthorized access to sensitive data by enabling customers to designate how much of the sensitive data to reveal with minimal impact on the application layer. It’s a policy-based security feature that hides the sensitive data in the result set of a query over designated database fields, while the data in the database is not changed.</p>
+<blockquote>
+<p>For example, a service representative at a call center may identify callers by several digits of their credit card number, but those data items should not be fully exposed to the service representative. A masking rule can be defined that masks all but the last four digits of any credit card number in the result set of any query. As another example, an appropriate data mask can be defined to protect personally identifiable information (PII) data, so that a developer can query production environments for troubleshooting purposes without violating compliance regulations.</p>
+</blockquote>
+<ol>
+<li>
+<p>Return to the Overview blade of your SQL database in the <a href="https://portal.azure.com">Azure portal</a>, and select <strong>Dynamic Data Masking</strong> from the left-hand menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e2-01.png" alt="Dynamic Data Masking is highlighted in the left-hand menu." title="Dynamic Data Masking"></p>
+</li>
+<li>
+<p>On the Dynamic Data Masking blade, you may see a few recommended fields to mask that have been flagged as they may contain sensitive data. For our case, we want to apply a mask to the <code>DOB</code> field on the <code>people</code> table to provide more protection to GDPR data. To do this, select <strong>+ Add mask</strong> in the Dynamic Data Masking toolbar.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e2-02.png" alt="Dynamic Data Masking window with recommended fields. The +Add mask button in the toolbar is highlighted." title="Dynamic Data Masking"></p>
+</li>
+<li>
+<p>On the Add masking rule blade, enter the following:</p>
+<ul>
+<li><strong>Schema</strong>: Select dbo.</li>
+<li><strong>Table</strong>: Select people.</li>
+<li><strong>Column</strong>: Select DOB (date).</li>
+<li><strong>Masking field format</strong>: Select Default value (0, xxx, 01-01-1900).</li>
+<li>Select <strong>Add</strong>.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ddm-add-masking-rule.png" alt="On the Add masking rule dialog, the values specified above are entered into the form, and the Add button is highlighted." title="Dynamic Data Masking"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ddm-save.png" alt="The Save button is highlighted on the DDM toolbar." title="Dynamic Data Masking"></p>
+</li>
+<li>
+<p>To view the impact of the Dynamic Data Masking, return to SSMS on your SqlServer2008 VM and run a few queries against the <code>people</code> table. On your SqlServer2008 VM, open SSMS and connect to the Azure SQL Database, by selecting <strong>Connect-&gt;Database Engine</strong> in the Object Explorer, and then entering the following into the Connect to server dialog:</p>
+<ul>
+<li><strong>Server name</strong>: Paste the server name of your Azure SQL Database, as you've done previously.</li>
+<li><strong>Authentication type</strong>: Select SQL Server Authentication.</li>
+<li><strong>Username</strong>: Enter <strong>demouser</strong></li>
+<li><strong>Password</strong>: Enter <strong>Password.1!!</strong></li>
+<li><strong>Remember password</strong>: Check this box.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-connect-azure-sql-database.png" alt="The SSMS Connect to Server dialog is displayed, with the Azure SQL Database name specified, SQL Server Authentication selected, and the demouser credentials entered." title="Connect to Server"></p>
+</li>
+<li>
+<p>Select <strong>Connect</strong>.</p>
+</li>
+<li>
+<p>Once connected, expand Databases, right-click the <code>ContosoInsurance</code> database and select <strong>New Query</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-database-new-query.png" alt="In the SSMS Object explorer, the context menu for the ContosoInsurance database is displayed, and New Query is highlighted." title="SSMS"></p>
+</li>
+<li>
+<p>To be able to test the mask applied to the <code>people.DOB</code> field, you need to create a user in the database that can be used for testing the masked field. This is because the <code>demouser</code> account you used to log in is a privileged user, so the mask is not be applied. In the new query window, paste the following SQL script into the new query window:</p>
+<pre><code class="language-sql"><div><span class="hljs-keyword">USE</span> [ContosoInsurance];
+GO
+
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> DDMUser <span class="hljs-keyword">WITHOUT</span> LOGIN;
+<span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> [dbo].[people] <span class="hljs-keyword">TO</span> DDMUser;
+</div></code></pre>
+<blockquote>
+<p>The SQL script above creates a new user in the database named <code>DDMUser</code>, and grants that user <code>SELECT</code> rights on the <code>dbo.people</code> table.</p>
+</blockquote>
+</li>
+<li>
+<p>Select <strong>Execute</strong> from the SSMS toolbar to run the query. A message that the commands completed successfully should appear in the Messages pane.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-execute.png" alt="The Execute button is highlighted on the SSMS toolbar." title="Execute"></p>
+</li>
+<li>
+<p>With the new user created, run a quick query to observe the results. Select <strong>New Query</strong> again, and paste the following into the new query window.</p>
+<pre><code class="language-sql"><div><span class="hljs-keyword">USE</span> [ContosoInsurance];
+GO
+
+<span class="hljs-keyword">EXECUTE</span> <span class="hljs-keyword">AS</span> <span class="hljs-keyword">USER</span> = <span class="hljs-string">&#x27;DDMUser&#x27;</span>;
+<span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> [dbo].[people];
+REVERT;
+</div></code></pre>
+</li>
+<li>
+<p>Select <strong>Execute</strong> from the toolbar, and examine the Results pane. Notice the <code>DOB</code> field is masked as <code>1900-01-01</code>, as defined by the mask format applied in the Azure portal.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-masked-results.png" alt="In the query results, the DOB field is highlighted, showing how all the birth dates are masked, and displaying as 1900-01-01, as defined in the mask format applied in the Azure portal." title="SSMS Query Results"></p>
+</li>
+<li>
+<p>For comparison, run the following query in a new query window to see how the data looks when running as a privileged user.</p>
+<pre><code class="language-sql"><div><span class="hljs-keyword">SELECT</span> TOP <span class="hljs-number">100</span> * <span class="hljs-keyword">FROM</span> [dbo].[people]
+</div></code></pre>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/ssms-unmasked-results.png" alt="In the query results, the DOB field is highlighted, showing how all the birth dates appear as the actual birth date, and not a masked value." title="SSMS Query Results"></p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Note</strong>: The SqlServer2008 VM is not needed for the remaining exercises of this hands-on lab. You can log off of that VM.</p>
+</blockquote>
+<h2 id="exercise-3-configure-key-vault">Exercise 3: Configure Key Vault</h2>
+<p>Duration: 15 minutes</p>
+<p>As part of their efforts to put tighter security controls in place, Contoso has requested that application secrets to be stored in a secure manner, so they aren't visible in plain text in application configuration files. In this exercise, you configure Azure Key Vault, which securely stores application secrets for the Contoso web and API applications, once migrated to Azure.</p>
+<h3 id="task-1-add-key-vault-access-policy">Task 1: Add Key Vault access policy</h3>
+<p>In this task, you add an access policy to Key Vault to allow secrets to be created with your account.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>Key Vault</strong> resource by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>contoso-kv-UniqueId</strong> Key vault resource from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-resources-key-vault.png" alt="The contosokv Key vault resource is highlighted in the list of resources." title="Key vault"></p>
+</li>
+<li>
+<p>On the Key Vault blade, select <strong>Access policies</strong> under Settings in the left-hand menu, and then select <strong>+ Add Access Policy</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/key-vault-add-access-policy-link.png" alt="The + Add Access Policy link is highlighted on the Access policies blade." title="Access policies"></p>
+</li>
+<li>
+<p>In the Add access policy dialog, enter the following:</p>
+<ul>
+<li><strong>Configure from template (optional)</strong>: Leave blank.</li>
+<li><strong>Key permissions</strong>: Leave set to 0 selected.</li>
+<li><strong>Secret permissions</strong>: Select this, and then choose <strong>Select All</strong>, to give yourself full rights to manage secrets.</li>
+<li><strong>Certificate permissions</strong>: Leave set to 0 selected.</li>
+<li><strong>Select principal</strong>: Enter the email address of the account you are logged into the Azure portal with, select the user object that appears, and then choose <strong>Select</strong>.</li>
+<li><strong>Authorized application</strong>: Leave set to None selected.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/key-vault-add-access-policy.png" alt="The values specified above are entered into the Add access policy dialog." title="Key Vault"></p>
+</li>
+<li>
+<p>Select <strong>Add</strong>.</p>
+</li>
+<li>
+<p>Select <strong>Save</strong> on the Access policies toolbar.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/key-vault-access-policies-save.png" alt="The Save button is highlighted on the Access policies toolbar." title="Key Vault"></p>
+</li>
+</ol>
+<h3 id="task-2-create-a-new-secret-to-store-the-sql-connection-string">Task 2: Create a new secret to store the SQL connection string</h3>
+<p>In this task, you add a secret to Key Vault containing the connection string for the <code>ContosoInsurance</code> Azure SQL database.</p>
+<ol>
+<li>
+<p>First, you need to retrieve the connection string to your Azure SQL Database. In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>SQL database</strong> resource by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>ContosoInsurance</strong> SQL database resource from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/resources-azure-sql-database.png" alt="The contosoinsurance SQL database resource is highlighted in the list of resources." title="SQL database"></p>
+</li>
+<li>
+<p>On the SQL database blade, select <strong>Connection strings</strong> from the left-hand menu, and then copy the <a href="http://ADO.NET">ADO.NET</a> connection string.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/sql-db-connection-strings.png" alt="Connection strings is selected and highlighted in the left-hand menu on the SQL database blade, and the copy button is highlighted next to the ADO.NET connection string" title="Connection strings"></p>
+</li>
+<li>
+<p>Paste the copied connection string into a text editor, such as Notepad.exe. This is necessary because you need to replace the tokenized password value before adding the connection string as a Secret in Key Vault.</p>
+</li>
+<li>
+<p>In the text editor, find and replace the tokenized <code>{your_password}</code> value with <code>Password.1!!</code>.</p>
+</li>
+<li>
+<p>Your connection string should now resemble the following:</p>
+<pre><code class="language-csharp"><div>Server=tcp:contosoinsurance-jt7yc3zphxfda.database.windows.net,<span class="hljs-number">1433</span>;Initial Catalog=ContosoInsurance;Persist Security Info=False;User ID=demouser;Password=Password<span class="hljs-number">.1</span>!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=<span class="hljs-number">30</span>;
+</div></code></pre>
+</li>
+<li>
+<p>Copy your updated connection string from the text editor.</p>
+</li>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate back to your <strong>Key Vault</strong> resource by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>contoso-kv-UniqueId</strong> Key vault resource from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-resources-key-vault.png" alt="The contosokv Key vault resource is highlighted in the list of resources." title="Key vault"></p>
+</li>
+<li>
+<p>On the Key Vault blade, select <strong>Secrets</strong> under Settings in the left-hand menu, and then select <strong>+ Generate/Import</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/key-vault-secrets.png" alt="On the Key Vault blade, Secrets is selected and the +Generate/Import button is highlighted." title="Key Vault Secrets"></p>
+</li>
+<li>
+<p>On the Create a secret blade, enter the following:</p>
+<ul>
+<li><strong>Upload options</strong>: Select Manual.</li>
+<li><strong>Name</strong>: Enter <strong>SqlConnectionString</strong></li>
+<li><strong>Value</strong>: Paste the updated SQL connection string you copied from the text editor.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/key-vault-secrets-create.png" alt="On the Create a secret blade, the values specified above are entered into the appropriate fields." title="Create a secret"></p>
+</li>
+<li>
+<p>Select <strong>Create</strong>.</p>
+</li>
+</ol>
+<h3 id="task-3-create-a-service-principal">Task 3: Create a service principal</h3>
+<p>In this task, you use the Azure Cloud Shell and Azure Command Line Interface (CLI) to create an Azure Active Directory (Azure AD) application and service principal (SP) used to provide your web and API apps access to secrets stored in Azure Key Vault.</p>
+<blockquote>
+<p><strong>Important</strong>: You must have rights within your Azure AD tenant to create applications and assign roles to complete this task.</p>
+</blockquote>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, select the Azure Cloud Shell icon from the menu at the top right of the screen.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-icon.png" alt="The Azure Cloud Shell icon is highlighted in the Azure portal's top menu." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>In the Cloud Shell window that opens at the bottom of your browser window, select <strong>PowerShell</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-select-powershell.png" alt="In the Welcome to Azure Cloud Shell window, PowerShell is highlighted." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>After a moment, you should receive a message that you have successfully requested a Cloud Shell, and be presented with a PS Azure prompt.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-ps-azure-prompt.png" alt="In the Azure Cloud Shell dialog, a message is displayed that requesting a Cloud Shell succeeded, and the PS Azure prompt is displayed." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>At the prompt, retrieve your subscription ID by running the following command at the Cloud Shell prompt:</p>
+<pre><code class="language-powershell"><div>az account list -<span class="hljs-literal">-output</span> table
+</div></code></pre>
+<blockquote>
+<p><strong>Note</strong>: If you have multiple Azure subscriptions, and the account you are using for this hands-on lab is not your default account, you may need to run <code>az account set --subscription &lt;your-subscription-id&gt;</code> after running the command above to set the appropriate account for the following Azure CLI commands, replacing <code>&lt;your-subscription-id&gt;</code> with the appropriate value from the output list above.</p>
+</blockquote>
+</li>
+<li>
+<p>In the output table, locate the subscription you are using for this hands-on lab, and copy the SubscriptionId value into a text editor, such as Notepad, for use below.</p>
+</li>
+<li>
+<p>Next, enter the following <code>az ad sp create-for-rbac</code> command at the Cloud Shell prompt, replacing <code>&lt;your-subscription-id&gt;</code> with the value you copied above and <code>&lt;your-resource-group-name&gt;</code> with the name of your <strong>hands-on-lab-SUFFIX</strong> resource group, and then press <code>Enter</code> to run the command.</p>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$subscriptionId</span> = <span class="hljs-string">&quot;&lt;your-subscription-id&gt;&quot;</span>
+<span class="hljs-variable">$resourceGroup</span> = <span class="hljs-string">&quot;&lt;your-resource-group-name&gt;&quot;</span>
+az ad <span class="hljs-built_in">sp</span> create<span class="hljs-literal">-for</span><span class="hljs-literal">-rbac</span> <span class="hljs-literal">-n</span> <span class="hljs-string">&quot;contoso-apps&quot;</span> -<span class="hljs-literal">-role</span> reader -<span class="hljs-literal">-scopes</span> subscriptions/<span class="hljs-variable">$subscriptionId</span>/resourceGroups/<span class="hljs-variable">$resourceGroup</span>
+</div></code></pre>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cli-create-sp.png" alt="The az ad sp create-for-rbac command is entered into the Cloud Shell, and the output of the command is displayed." title="Azure CLI"></p>
+</li>
+<li>
+<p>Copy the entire output from the command above into a text editor, as you need the <code>appId</code>, <code>name</code> and <code>password</code> values in upcoming tasks. The output should be similar to:</p>
+<pre><code class="language-json"><div>{
+    <span class="hljs-attr">&quot;appId&quot;</span>: <span class="hljs-string">&quot;94ee2739-794b-4038-a378-573a5f52918c&quot;</span>,
+    <span class="hljs-attr">&quot;displayName&quot;</span>: <span class="hljs-string">&quot;contoso-apps&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;http://contoso-apps&quot;</span>,
+    <span class="hljs-attr">&quot;password&quot;</span>: <span class="hljs-string">&quot;b9a3a8b7-574d-467f-8cae-d30d1d1c1ac4&quot;</span>,
+    <span class="hljs-attr">&quot;tenant&quot;</span>: <span class="hljs-string">&quot;d280491c-b27a-XXXX-XXXX-XXXXXXXXXXXX&quot;</span>
+}
+</div></code></pre>
+<blockquote>
+<p><strong>Important</strong>: Make sure you copy the output into a text editor, as the Azure Cloud Shell session eventually times out, and you won't have access to the output. The <code>appId</code> is used in the steps below to assign an access policy to Key Vault, and both the <code>appId</code> and <code>password</code> are used in the next exercise to add the configuration values to the web and API apps to allow them to read secrets from Key Vault.</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="task-4-assign-the-service-principal-access-to-key-vault">Task 4: Assign the service principal access to Key Vault</h3>
+<p>In this task, you assign the service principal you created above to a reader role on your resource group and add an access policy to Key Vault to allow it to view secrets stored there.</p>
+<ol>
+<li>
+<p>Next, run the following command to get the name of your Key Vault:</p>
+<pre><code class="language-powershell"><div>az keyvault list <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-output</span> table
+</div></code></pre>
+</li>
+<li>
+<p>In the output from the previous command, copy the value from the <code>name</code> field into a text editor. You use it in the next step and also for configuration of your web and API apps.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-keyvault-list.png" alt="The value of the name property is highlighted in the output from the previous command." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>To assign permissions to your service principal to read Secrets from Key Vault, run the following command, replacing <code>&lt;your-key-vault-name&gt;</code> with the name of your Key Vault that you copied in the previous step and pasted into a text editor.</p>
+<pre><code class="language-powershell"><div>az keyvault <span class="hljs-built_in">set-policy</span> <span class="hljs-literal">-n</span> &lt;your<span class="hljs-literal">-key</span><span class="hljs-literal">-vault</span><span class="hljs-literal">-name</span>&gt; -<span class="hljs-literal">-spn</span> http://contoso<span class="hljs-literal">-apps</span> -<span class="hljs-literal">-secret</span><span class="hljs-literal">-permissions</span> get list
+</div></code></pre>
+</li>
+<li>
+<p>In the output, you should see your service principal appId listed with &quot;get&quot; and &quot;list&quot; permissions for secrets.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-keyvault-set-policy.png" alt="In the output from the command above, the secrets array is highlighted." title="Azure Cloud Shell"></p>
+</li>
+</ol>
+<h2 id="exercise-4-deploy-web-api-into-azure-app-services">Exercise 4: Deploy Web API into Azure App Services</h2>
+<p>Duration: 45 minutes</p>
+<p>The developers at Contoso have been working toward migrating their apps to the cloud, and they have provided you with a starter solution developed using <a href="http://ASP.NET">ASP.NET</a> Core 2.2. As such, most of the pieces are already in place to deploy the apps to Azure, as well as configure them to communicate with the new app services. Since the required services have already been provisioned, what remains is to integrate Azure Key Vault into the API, apply application-level configuration settings, and then deploy the apps from the Visual Studio starter solution. In this task, you apply application settings to the Web API using the Azure Portal. Once the application settings have been set, you deploy the Web App and API App into Azure from Visual Studio.</p>
+<h3 id="task-1-connect-to-the-labvm">Task 1: Connect to the LabVM</h3>
+<p>In this task, you open an RDP connection to the LabVM, and downloading a copy of the starter solution provided by Contoso. The application deployments are handled using Visual Studio 2019, installed on the LabVM.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>LabVM</strong> virtual machine by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and selecting the <strong>LabVM</strong> virtual machine from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/resources-sql-labvm.png" alt="The LabVM virtual machine is highlighted in the list of resources." title="LabVM virtual machine"></p>
+</li>
+<li>
+<p>On the LabVM's <strong>Overview</strong> blade, select <strong>Connect</strong> on the top menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/connect-labvm.png" alt="The LabVM blade is displayed, with the Connect button highlighted in the top menu." title="Connect to LabVM"></p>
+</li>
+<li>
+<p>On the Connect to virtual machine blade, select <strong>Download RDP File</strong>, then open the downloaded RDP file.</p>
+</li>
+<li>
+<p>Select <strong>Connect</strong> on the Remote Desktop Connection dialog.</p>
+</li>
+<li>
+<p>Enter the following credentials when prompted, and then select <strong>OK</strong>:</p>
+<ul>
+<li><strong>Username</strong>: demouser</li>
+<li><strong>Password</strong>: Password.1!!</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/rdc-credentials-sql-2008.png" alt="The credentials specified above are entered into the Enter your credentials dialog." title="Enter your credentials"></p>
+</li>
+<li>
+<p>Select <strong>Yes</strong> to connect, if prompted that the identity of the remote computer cannot be verified.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/remote-desktop-connection-identity-verification-labvm.png" alt="In the Remote Desktop Connection dialog box, a warning states that the identity of the remote computer cannot be verified, and asks if you want to continue anyway. At the bottom, the Yes button is circled." title="Remote Desktop Connection dialog"></p>
+</li>
+</ol>
+<h3 id="task-2-open-starter-solution-with-visual-studio">Task 2: Open starter solution with Visual Studio</h3>
+<p>In this task, you open the <code>Contoso</code> starter solution in Visual Studio. The Visual Studio solution contains the following projects:</p>
+<ul>
+<li><strong>Contoso.Azure</strong>: Common library containing helper classes used by other projects within the solution to communicate with Azure services.</li>
+<li><strong>Contoso.Data</strong>: Library containing data access objects.</li>
+<li><strong>Contoso.FunctionApp</strong>: Contains an Azure Function that is used to retrieve policy documents from Blob storage.</li>
+<li><strong><a href="http://Contoso.Web">Contoso.Web</a></strong>: <a href="http://ASP.NET">ASP.NET</a> Core 2.2 PolicyConnect web application.</li>
+<li><strong>Contoso.WebApi</strong>: <a href="http://ASP.NET">ASP.NET</a> Core 2.2 Web API used by the web application to communicate with the database.</li>
+</ul>
+<ol>
+<li>
+<p>In File Explorer, navigate to <code>C:\MCW\MCW-App-modernization-master\Hands-on lab\lab-files\src</code> and double-click the <code>Contoso.sln</code> file to open the solution in Visual Studio.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/file-explorer-vs-solution.png" alt="The Contoso.sln file is highlighted in the folder specified above." title="File explorer"></p>
+</li>
+<li>
+<p>If prompted about how to open the file, select <strong>Visual Studio 2019</strong> and then select <strong>OK</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/solution-file-open-with.png" alt="Visual Studio 2019 is highlighted in the How do you want to open this file? dialog." title="Visual Studio 2019"></p>
+</li>
+<li>
+<p>Sign in to Visual Studio using your Azure account credentials.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-sign-in.png" alt="The Sign in button is highlighted on the Visual Studio Welcome screen." title="Visual Studio 2019"></p>
+</li>
+<li>
+<p>When prompted with a security warning, uncheck <strong>Ask me for every project in this solution</strong>, and then select <strong>OK</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-security-warning.png" alt="On the security warning dialog, the Ask me for every project in this solution box is unchecked and highlighted." title="Visual Studio"></p>
+</li>
+</ol>
+<h3 id="task-3-update-web-api-to-use-key-vault">Task 3: Update Web API to use Key Vault</h3>
+<p>In this task, you update the <code>Contoso.WebApi</code> project to use Azure Key Vault for storing and retrieving application secrets. You start by adding the connection information to the <code>appsettings.json</code> file in the <code>Contoso.WebApi</code> project, and then add some code to enable the use of Azure Key Vault.</p>
+<blockquote>
+<p>The required NuGet package to enable interaction with Key Vault has already been referenced in the project to save time. The package added to facilitate this is: <code>Microsoft.Extensions.Configuration.AzureKeyVault</code>.</p>
+</blockquote>
+<ol>
+<li>
+<p>In Visual Studio, expand the <code>Contoso.WebApi</code> project in the Solution Explorer, locate the <code>Program.cs</code> file and open it by double-clicking on it.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-api-program-cs.png" alt="In the Visual Studio Solution Explorer, the Program.cs file is highlighted under the Contoso.WebApi project." title="Solution Explorer"></p>
+</li>
+<li>
+<p>In the <code>Program.cs</code> file, locate the <code>TODO #1</code> block (line 23) within the <code>CreateWebHostBuilder</code> method.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-program-cs-todo-1.png" alt="The TODO #1 block is highlighted within the Program.cs code." title="Program.cs"></p>
+</li>
+<li>
+<p>Complete the code within the block, using the following code, to add Key Vault to the configuration, and provide Key Vault with the appropriate connection information.</p>
+<pre><code class="language-csharp"><div>config.AddAzureKeyVault(
+    KeyVaultConfig.GetKeyVaultEndpoint(buildConfig[<span class="hljs-string">&quot;KeyVaultName&quot;</span>]),
+    buildConfig[<span class="hljs-string">&quot;KeyVaultClientId&quot;</span>],
+    buildConfig[<span class="hljs-string">&quot;KeyVaultClientSecret&quot;</span>]
+);
+</div></code></pre>
+</li>
+<li>
+<p>Save <code>Program.cs</code>. The updated <code>CreateWebHostBuilder</code> method should now look like the following:</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-program-cs-updated.png" alt="Screenshot of the updated Program.cs file." title="Program.cs"></p>
+</li>
+<li>
+<p>Next, you update the <code>Startup.cs</code> file in the <code>Contoso.WebApi</code> project. Locate the file in the Solution Explorer and double-click it.</p>
+</li>
+<li>
+<p>In the previous exercise, you added the connection string for your Azure SQL Database to Key Vault, and assigned the secret a name of <code>SqlConnectionString</code>. Using the code below, update the <code>TODO #2</code> block (line 38), within the <code>Startup.cs</code> file's <code>Configuration</code> property. This allows your application to retrieve the connection string from Key Vault using the secret name.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-startup-cs-todo-2.png" alt="The TODO #2 block is highlighted within the Startup.cs code." title="Startup.cs"></p>
+<pre><code class="language-csharp"><div>services.AddDbContext&lt;ContosoDbContext&gt;(options =&gt;
+    options.UseSqlServer(Configuration[<span class="hljs-string">&quot;SqlConnectionString&quot;</span>]));
+</div></code></pre>
+</li>
+<li>
+<p>Save <code>Startup.cs</code>. The updated <code>Configuration</code> property now looks like the following:</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-startup-cs-updated.png" alt="Screenshot of the updated Startup.cs file." title="Startup.cs"></p>
+</li>
+<li>
+<p>Your Web API is now fully configured to retrieve secrets from Azure Key Vault.</p>
+</li>
+</ol>
+<h3 id="task-4-copy-keyvault-configuration-section-to-api-app-in-azure">Task 4: Copy KeyVault configuration section to API App in Azure</h3>
+<p>Before deploying the Web API to Azure, you need to add the required application settings into the configuration for the Azure API App. In this task, you use the advanced configuration editor in your API App to add in the configuration settings required to connect to and retrieve secrets from Key Vault.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>API App</strong> by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and selecting the <strong>contoso-api-UniqueId</strong> App service from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-resources-api-app.png" alt="The API App resource is highlighted in the list of resources." title="API App"></p>
+</li>
+<li>
+<p>On the API App blade, select <strong>Configuration</strong> on the left-hand menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/api-app-configuration-menu.png" alt="The Configuration item is highlighted in the API App left-hand menu." title="API App"></p>
+</li>
+<li>
+<p>On the Application settings tab of the Configuration blade, select <strong>Advanced edit</strong> under Application settings. The Advanced edit screen allows you to paste JSON directly into the configuration.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/api-app-configuration-advanced-edit.png" alt="Advanced edit is highlighted on the Application settings tab." title="API App"></p>
+</li>
+<li>
+<p>We are going to use the Advanced editor to add all three of the Key Vault settings at once. To do this, we are going to replace the content of the Advanced editor with the following, which you need to update as follows:</p>
+<ul>
+<li><code>&lt;your-key-vault-name&gt;</code>: Replace this with the name of your Key Vault, which you copied into a text editor in in the previous exercise.</li>
+<li><code>&lt;your-service-principal-application-id&gt;</code>: Replace this with the <code>appId</code> value you received as output when you created the service principal.</li>
+<li><code>&lt;your-service-principal-password&gt;</code>: Replace this with the <code>password</code> value you received as output when you created the service principal.</li>
+</ul>
+<pre><code class="language-json"><div>[
+    {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;KeyVaultName&quot;</span>,
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;&lt;your-key-vault-name&gt;&quot;</span>
+    },
+    {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;KeyVaultClientId&quot;</span>,
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;&lt;your-service-principal-application-id&gt;&quot;</span>
+    },
+    {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;KeyVaultClientSecret&quot;</span>,
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;&lt;your-service-principal-password&gt;&quot;</span>
+    }
+]
+</div></code></pre>
+</li>
+<li>
+<p>The final contents of the editor should look similar to the following:</p>
+<pre><code class="language-json"><div>[
+    {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;KeyVaultName&quot;</span>,
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;contosokvjt7yc3zphxfda&quot;</span>
+    },
+    {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;KeyVaultClientId&quot;</span>,
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;94ee2739-794b-4038-a378-573a5f52918c&quot;</span>
+    },
+    {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;KeyVaultClientSecret&quot;</span>,
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;b9a3a8b7-574d-467f-8cae-d30d1d1c1ac4&quot;</span>
+    }
+]
+</div></code></pre>
+</li>
+<li>
+<p>Select <strong>OK</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/api-app-configuration-advanced-editor.png" alt="The OK button is highlighted on the Advanced edit dialog." title="Advanced edit"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong> on the Configuration blade.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/api-app-configuration-save.png" alt="The Save button is highlighted on the toolbar." title="Save"></p>
+</li>
+</ol>
+<h3 id="task-5-deploy-the-api-to-azure">Task 5: Deploy the API to Azure</h3>
+<p>In this task, you use Visual Studio to deploy the API project into an API App in Azure.</p>
+<ol>
+<li>
+<p>In Visual Studio, right-click on the <strong>Contoso.WebApi</strong> project in the Solution Explorer and select <strong>Publish</strong> from the context menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e4-02.png" alt="The Contoso.WebApi project is selected, and Publish is highlighted in the context menu." title="Publish Web API"></p>
+</li>
+<li>
+<p>On the <strong>Pick a publish target</strong> dialog, select <strong>App Service</strong> and choose <strong>Select Existing</strong>, and then select <strong>Create Profile</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-publish-app-service.png" alt="On the Pick a publish target screen, App Service is selected, the Select Existing radio button is selected, and the Create Profile button is highlighted.." title="Pick a publish target"></p>
+</li>
+<li>
+<p>On the App Service dialog, select your Azure subscription, logging in if necessary on with your credentials and ensure the subscription you published earlier is selected, then select your API App (resource starting with &quot;contoso-<strong>api</strong>&quot;) under your hands-on-lab-SUFFIX resource group.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-publish-app-service-api.png" alt="Select Existing App Service window. App Services are listed under hands-on lab resource group and contoso-api App Service is highlighted." title="Select App Service"></p>
+</li>
+<li>
+<p>Select <strong>OK</strong>.</p>
+</li>
+<li>
+<p>Back on the Visual Studio Publish page for the <code>Contoso.WebApi</code> project, select <strong>Publish</strong> to start the process of publishing your Web API to your Azure API App.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-publish-api.png" alt="The Publish button is highlighted next to the newly created publish profile on the Publish page." title="Publish"></p>
+</li>
+<li>
+<p>In the Visual Studio <strong>Web Publish Activity</strong> view, you should see a status that indicates the Web API was published successfully, along with the URL to the site.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-web-publish-activity-api.png" alt="Web Publish Activity view with the publish process status and API site url" title="Web Publish Activity"></p>
+<blockquote>
+<p>If you don't see the <strong>Web Publish Activity</strong> view, you can find it on View menu-&gt; Other Windows -&gt; Microsoft Azure Activity Log.</p>
+</blockquote>
+</li>
+<li>
+<p>A web browser should open to the published site. If not, open the URL of the published Web API in a browser window. Initially, you should see a message that the page cannot be found.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-api-publish-page-not-found.png" alt="A page can't be found error message is displayed in the web browser." title="Page not found"></p>
+</li>
+<li>
+<p>To validate the API App is function property, add <code>/swagger</code> to the end of the URL in your browser's address bar (e.g., <a href="https://contoso-api-jjbp34uowoybc.azurewebsites.net/swagger/">https://contoso-api-jjbp34uowoybc.azurewebsites.net/swagger/</a>). This brings up the Swagger UI page of your API, which displays a list of the available API endpoints.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/swagger-ui.png" alt="Swagger screen displayed for the API App." title="Validate published Web API"></p>
+<blockquote>
+<p><strong>Note</strong>: <a href="https://swagger.io/tools/swagger-ui/">Swagger UI</a> automatically generates visual documentation for REST APIs following the OpenAPI Specification. It makes it easy for developers to visualize and interact with the API's endpoints without having any of the implementation logic in place.</p>
+</blockquote>
+</li>
+<li>
+<p>You can test the functionality of the API by selecting one of the <code>GET</code> endpoints, and selecting <strong>Try it out</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/swagger-try-it-out.png" alt="The Try it out button is highlighted under the Dependents GET endpoint" title="Swagger"></p>
+</li>
+<li>
+<p>Select <strong>Execute</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/swagger-execute.png" alt="The Execute button is displayed." title="Swagger"></p>
+</li>
+<li>
+<p>In the Response, you should see a Response Code of 200, and JSON objects in the Response body.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/swagger-execute-response.png" alt="The response to the execute request is displayed." title="Swagger"></p>
+</li>
+</ol>
+<h2 id="exercise-5-deploy-web-application-into-azure-app-services">Exercise 5: Deploy web application into Azure App Services</h2>
+<p>Duration: 10 minutes</p>
+<p>In this exercise, you update the <code>Contoso.Web</code> web application to connect to your newly deployed API App and then deploy the web app into Azure App Services.</p>
+<h3 id="task-1-add-api-app-url-to-web-app-application-settings">Task 1: Add API App URL to Web App Application settings</h3>
+<p>In this task, you prepare your Web App to work with the API App by adding the URL of your published API App to the Application Settings of your Web App, using the Azure Cloud Shell and Azure CLI.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, select the Azure Cloud Shell icon from the menu at the top right of the screen.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-icon.png" alt="The Azure Cloud Shell icon is highlighted in the Azure portal's top menu." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>In the Cloud Shell window that opens at the bottom of your browser window, select <strong>PowerShell</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-select-powershell.png" alt="In the Welcome to Azure Cloud Shell window, PowerShell is highlighted." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>After a moment, you are presented with a PS Azure prompt.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-ps-azure-prompt.png" alt="In the Azure Cloud Shell dialog, a message is displayed that requesting a Cloud Shell succeeded, and the PS Azure prompt is displayed." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>At the Cloud Shell prompt, run the following command to retrieve both your API App URL and your Web App, making sure to replace <code>&lt;your-resource-group-name&gt;</code> with your resource group name:</p>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$resourceGroup</span> = <span class="hljs-string">&quot;&lt;your-resource-group-name&gt;&quot;</span>
+az webapp list <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-output</span> table
+</div></code></pre>
+<blockquote>
+<p><strong>Note</strong>: If you have multiple Azure subscriptions, and the account you are using for this hands-on lab is not your default account, you may need to run <code>az account list --output table</code> at the Azure Cloud Shell prompt to output a list of your subscriptions, then copy the Subscription Id of the account you are using for this lab, and then run <code>az account set --subscription &lt;your-subscription-id&gt;</code> to set the appropriate account for the Azure CLI commands.</p>
+</blockquote>
+</li>
+<li>
+<p>In the output, copy two values for use in the next step. Copy the <strong>DefaultHostName</strong> value for your API App (the resource name starts with contoso-<strong>api</strong>) and also copy the Web App <strong>Name</strong> value.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-webapp-list.png" alt="The Web App Name and API App DefaultHostName values are highlighted in the output of the command above." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>Next replace the tokenized values in the following command as specified below, and then run it from the Azure Cloud Shell command prompt.</p>
+<ul>
+<li><code>&lt;your-web-app-name&gt;</code>: Replace with your Function App name, which you copied in the previous step.</li>
+<li><code>&lt;your-storage-account-sas-token&gt;</code>: Replace with the <code>policies</code> container URL you copied into a text editor previously.</li>
+</ul>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$webAppName</span> = <span class="hljs-string">&quot;&lt;your-web-app-name&gt;&quot;</span>
+<span class="hljs-variable">$defaultHostName</span> = <span class="hljs-string">&quot;&lt;your-api-default-host-name&gt;&quot;</span>
+az webapp config appsettings <span class="hljs-built_in">set</span> <span class="hljs-literal">-n</span> <span class="hljs-variable">$webAppName</span> <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-settings</span> <span class="hljs-string">&quot;ApiUrl=https://<span class="hljs-variable">$defaultHostName</span>&quot;</span>
+</div></code></pre>
+</li>
+<li>
+<p>In the output, you should see the newly added setting in your Web App's application settings.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-webapp-config-output.png" alt="The ApiUrl app setting in highlighted in the output of the previous command." title="Azure Cloud Shell"></p>
+</li>
+</ol>
+<h3 id="task-2-deploy-web-application-to-azure">Task 2: Deploy web application to Azure</h3>
+<p>In this task, you publish the <code>Contoso.Web</code> application into an Azure Web App.</p>
+<ol>
+<li>
+<p>In Visual Studio on your LabVM, right-click the <code>Contoso.Web</code> project in the Solution Explorer, and then select <strong>Publish</strong> from the context menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-web-publish.png" alt="Publish in highlighted in the context menu for the Contoso.Web project." title="Publish"></p>
+</li>
+<li>
+<p>On the <strong>Pick a publish target</strong> dialog, select <strong>App Service</strong> and choose <strong>Select Existing</strong>, and then select <strong>Create Profile</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-publish-app-service.png" alt="Select existing is selected and highlighted on the Pick a publish target dialog." title="Publish"></p>
+</li>
+<li>
+<p>On the App Service dialog, select your Azure subscription, logging in if necessary on with your credentials and ensure the subscription you published earlier is selected, then select your Web App (resource starting with &quot;contoso-<strong>web</strong>&quot;) under your hands-on-lab-SUFFIX resource group.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-web-publish-app-service.png" alt="Select Existing App Service window. App Services are listed under hands-on lab resource group and contoso-web App Service is highlighted." title="Select App Service"></p>
+</li>
+<li>
+<p>Select <strong>OK</strong>.</p>
+</li>
+<li>
+<p>Back on the Visual Studio Publish page for the <code>Contoso.Web</code> project, select <strong>Publish</strong> to start the process of publishing your Web API to your Azure API App.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-publish-web.png" alt="The Publish button is highlighted next to the newly created publish profile on the Publish page." title="Publish"></p>
+</li>
+<li>
+<p>In the Visual Studio <strong>Web Publish Activity</strong> view, observe the Publish Succeeded message, along with the URL to the site.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-web-publish-succeeded.png" alt="Web Publish Activity view with the publish process status and Web App url" title="Web Publish Activity"></p>
+</li>
+<li>
+<p>A web browser should open to the published site. If not, open the URL of the published Web App in a browser window.</p>
+</li>
+<li>
+<p>In the PolicyConnect web page, enter the following credentials to log in, and then select <strong>Log in</strong>:</p>
+<ul>
+<li><strong>Username</strong>: demouser</li>
+<li><strong>Password</strong>: Password.1!!</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-login.png" alt="The credentials above are entered into the login screen for the PolicyConnect web site." title="PolicyConnect"></p>
+</li>
+<li>
+<p>Once logged in, select <strong>Managed Policy Holders</strong> from the top menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-managed-policy-holders.png" alt="Manage Policy Holders is highlighted in the PolicyConnect web site's menu." title="PolicyConnect"></p>
+</li>
+<li>
+<p>On the Policy Holders page, review the list of policy holder, and information about their policies. This information was pulled from your Azure SQL Database using the connection string stored in Azure Key Vault. Select the <strong>Details</strong> link next to one of the records.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-policy-holders-data.png" alt="Policy holder data is displayed on the page." title="PolicyConnect"></p>
+</li>
+<li>
+<p>On the Policy Holder Details page, select the link under <strong>File Path</strong>, and notice that the result is a page not found error.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-policy-holder-details.png" alt="The File Path link is highlighted on the Policy Holder Details page." title="PolicyConnect"></p>
+</li>
+<li>
+<p>Contoso is storing their policy documents on a network file share, so these are not accessible to the deployed web app. In the next exercises, you address that issue.</p>
+</li>
+</ol>
+<h2 id="exercise-6-upload-policy-documents-into-blob-storage">Exercise 6: Upload policy documents into blob storage</h2>
+<p>Duration: 10 minutes.</p>
+<p>Contoso is currently storing all of their scanned PDF documents on a shared local network. They have asked to be able to store them in the cloud automatically from a workflow. In this exercise, you provide a storage account to store the files in a blob container. Then, you provide a way to bulk upload their existing PDFs.</p>
+<h3 id="task-1-create-container-for-storing-pdfs-in-azure-storage">Task 1: Create container for storing PDFs in Azure storage</h3>
+<p>In this task, you create a new blob container in your storage account for the scanned PDF policy documents.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>Storage account</strong> resource by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>contosoUniqueId</strong> Storage account resource from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/resource-group-resources-storage-account.png" alt="The Storage Account resource is highlighted in the list of resources." title="Storage account"></p>
+</li>
+<li>
+<p>From the Storage account Overview blade, select <strong>Containers</strong> under services.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/storage-account-containers.png" alt="Containers is selected on the Overview blade of the Storage account." title="Storage account"></p>
+</li>
+<li>
+<p>On the Container blade, select <strong>+ Container</strong> to create a new container, and in the New container dialog, enter &quot;policies&quot; as the container name. Leave the Public access level set to <strong>Private (no anonymous access)</strong>, and then select <strong>OK</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e5-03.png" alt="The New container dialog is displayed with a name of &quot;policies&quot; entered, and the Public access level set to Container (anonymous read access for containers and blobs)." title="Container"></p>
+</li>
+<li>
+<p>After the container has been created, select it on the Container blade, then select <strong>Properties</strong> from the left-hand menu, and copy the URL from the policies - Properties blade. Paste the copied URL into a text editor for later reference.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e5-04.png" alt="The policies container is selected, with the Properties blade selected, and the URL of the storage container highlighted." title="Container properties"></p>
+</li>
+<li>
+<p>Next retrieve the access key for your storage account, which you need to provide to AzCopy below to connect to your storage container. On your Storage account blade in the Azure portal, select <strong>Access keys</strong> from the left-hand menu, and copy the <strong>key1 Key</strong> value to a text editor for use below.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e5-05.png" alt="Access Keys is selected on the Storage account. On the blade, access keys and buttons to copy are displayed" title="Access Keys"></p>
+</li>
+</ol>
+<h3 id="task-2-create-a-sas-token">Task 2: Create a SAS token</h3>
+<p>In this task, you generate a shared access signature (SAS) token for your storage account. This is used later in the lab to allow your Azure Function to retrieve files from the <code>policies</code> storage account container.</p>
+<ol>
+<li>
+<p>On your Storage account blade in the Azure portal, and select <strong>Shared access signature</strong> from the left-hand menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/storage-shared-access-signature.png" alt="The Shared access signature menu item is highlighted." title="Storage account"></p>
+</li>
+<li>
+<p>On the Shared access signature blade, select <strong>Generate SAS and connection string</strong>, and then copy the SAS token value by selecting the Copy to clipboard button to the right of the value.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/storage-shared-access-signature-generate.png" alt="On the Share access signature blade, the Generate SAS and connection string button is highlighted, and the copy to clipboard button is highlighted to the right of the SAS token value." title="Shared access signature"></p>
+</li>
+<li>
+<p>Paste the SAS token into a text editor for later use.</p>
+</li>
+</ol>
+<h3 id="task-3-bulk-upload-pdfs-to-blob-storage-using-azcopy">Task 3: Bulk upload PDFs to blob storage using AzCopy</h3>
+<p>In this task, you download and install <a href="https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy">AzCopy</a>. You then use AzCopy to copy the PDF files from the &quot;on-premises&quot; location into the policies container in Azure storage.</p>
+<ol>
+<li>
+<p>On your LabVM, open a web browser and download the latest version of AzCopy from <a href="https://aka.ms/downloadazcopy">https://aka.ms/downloadazcopy</a>.</p>
+</li>
+<li>
+<p>Run the downloaded installer, accepting the license agreement and all the defaults, to complete the AzCopy install.</p>
+</li>
+<li>
+<p>Launch a Command Prompt window (Select search on the task bar, type <strong>cmd</strong>, and select Enter) on your LabVM.</p>
+</li>
+<li>
+<p>At the Command prompt, change the directory to the AzCopy directory. By default, it is installed to <code>C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy</code> (On a 32-bit machine, change <code>Program Files (x86)</code> to <code>Program Files</code> ). You can do this by running the command:</p>
+<pre><code class="language-bash"><div><span class="hljs-built_in">cd</span> C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy
+</div></code></pre>
+</li>
+<li>
+<p>Enter the following command at the command prompt. The tokenized values should be replaced as follows:</p>
+<ul>
+<li><code>[FILE-SOURCE]</code>: This is the path to the <code>policy-documents</code> folder your downloaded copy of the GitHub repo. If you used the extraction path of <code>C:\MCW</code>, the path is <code>C:\MCW\MCW-App-modernization-master\Hands-on lab\lab-files\policy-documents</code>.</li>
+<li><code>[STORAGE-CONTAINER-URL]</code>: This is the URL to your storage account's policies container, which you copied in the last step of the previous task. (e.g., <a href="https://contosojt7yc3zphxfda.blob.core.windows.net/policies">https://contosojt7yc3zphxfda.blob.core.windows.net/policies</a>)</li>
+<li><code>[STORAGE-ACCOUNT-KEY]</code>: This is the blob storage account key you copied previously in this task. (e.g., <code>eqgxGSnCiConfgshXQ1rFwBO+TtCH6sduekk6s8PxPBxHWOmFumycTeOlL3myb8eg4Ba2dn7rtdHnk/1pi6P/w==</code>)</li>
+</ul>
+<pre><code class="language-bash"><div>AzCopy /Source:<span class="hljs-string">&quot;[FILE-SOURCE]&quot;</span> /Dest:<span class="hljs-string">&quot;[STORAGE-CONTAINER-URL]&quot;</span> /DestKey:<span class="hljs-string">&quot;[STORAGE-ACCOUNT-KEY]&quot;</span> /S
+</div></code></pre>
+</li>
+<li>
+<p>The final command should resemble the following:</p>
+<pre><code class="language-bash"><div>AzCopy /Source:<span class="hljs-string">&quot;C:\MCW\MCW-App-modernization-master\Hands-on lab\lab-files\policy-documents&quot;</span> /Dest:<span class="hljs-string">&quot;https://contosojt7yc3zphxfda.blob.core.windows.net/policies&quot;</span> /DestKey:<span class="hljs-string">&quot;XJT3us2KT1WQHAQBbeotrRCWQLZayFDNmhLHt3vl2miKOHeXasB7IUlw2+y4afH6R/03wbTiRK9SRqGXt9JVqQ==&quot;</span> /S
+</div></code></pre>
+</li>
+<li>
+<p>In the output of the command, you should see that 650 files were transferred successfully.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e5-06.png" alt="The output of the AzCopy command is displayed." title="AzCopy output"></p>
+</li>
+<li>
+<p>You can verify the upload by navigating to the policies container in your Azure Storage account.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e5-07.png" alt="The policies Container with the Overview blade selected shows the list of uploaded files." title="Policies Container"></p>
+</li>
+</ol>
+<h2 id="exercise-7-create-serverless-api-for-accessing-pdfs">Exercise 7: Create serverless API for accessing PDFs</h2>
+<p>Duration: 30 minutes</p>
+<p>Contoso has made some updates to prepare their applications, but there are some features that they have not been able to build into the API yet. They have requested that you assist them in setting up a proof-of-concept (POC) API solution to enable users of their application to retrieve their policy documents directly from their Azure Storage account. In this exercise, you create an Azure Function to enable this functionality using serverless technologies.</p>
+<h3 id="task-1-add-application-settings-to-your-function-app">Task 1: Add application settings to your Function App</h3>
+<p>In this task, you prepare your Azure Function App to work with your new Function by adding your storage account policies container URL and SAS token values to the Application Settings of your Function App, using the Azure Cloud Shell and Azure CLI.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, select the Azure Cloud Shell icon from the menu at the top right of the screen.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-icon.png" alt="The Azure Cloud Shell icon is highlighted in the Azure portal's top menu." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>In the Cloud Shell window that opens at the bottom of your browser window, select <strong>PowerShell</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-select-powershell.png" alt="In the Welcome to Azure Cloud Shell window, PowerShell is highlighted." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>After a moment, you should receive a message that you have successfully requested a Cloud Shell, and be presented with a PS Azure prompt.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-ps-azure-prompt.png" alt="In the Azure Cloud Shell dialog, a message is displayed that requesting a Cloud Shell succeeded, and the PS Azure prompt is displayed." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>At the prompt, retrieve your Function App name by running the following command at the Cloud Shell prompt, replacing <code>&lt;your-resource-group-name&gt;</code> with your resource group name:</p>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$resourceGroup</span> = <span class="hljs-string">&quot;&lt;your-resource-group-name&gt;&quot;</span>
+az functionapp list <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-output</span> table
+</div></code></pre>
+<blockquote>
+<p><strong>Note</strong>: If you have multiple Azure subscriptions, and the account you are using for this hands-on lab is not your default account, you may need to run <code>az account list --output table</code> at the Azure Cloud Shell prompt to output a list of your subscriptions, then copy the Subscription Id of the account you are using for this lab, and then run <code>az account set --subscription &lt;your-subscription-id&gt;</code> to set the appropriate account for the Azure CLI commands.</p>
+</blockquote>
+</li>
+<li>
+<p>In the output, copy the <strong>Name</strong> value for use in the next step.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-functionapp-list.png" alt="The Function App Name value is highlighted in the output of the command above." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>For the next command, you need the URL of your <code>policies</code> container and the <code>SAS token</code> values you added to your text editor previously. Replace the tokenized values in the following command, and then run it from the Azure Cloud Shell command prompt.</p>
+<ul>
+<li><code>&lt;your-function-app-name&gt;</code>: Replace with your Function App name, which you copied in the previous step.</li>
+<li><code>&lt;your-policies-container-url&gt;</code>: Replace with the <code>policies</code> container URL you copied into a text editor previously.</li>
+<li><code>&lt;your-storage-account-sas-token&gt;</code>: Replace with the <code>SAS Token</code> of your Storage account, which you copied into a text editor previously.</li>
+</ul>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$functionAppName</span> = <span class="hljs-string">&quot;&lt;your-function-app-name&gt;&quot;</span>
+<span class="hljs-variable">$storageUrl</span> = <span class="hljs-string">&quot;&lt;your-policies-container-url&gt;&quot;</span>
+<span class="hljs-variable">$storageSas</span> = <span class="hljs-string">&quot;&lt;your-storage-account-sas-token&gt;&quot;</span>
+az functionapp config appsettings <span class="hljs-built_in">set</span> <span class="hljs-literal">-n</span> <span class="hljs-variable">$functionAppName</span> <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-settings</span> <span class="hljs-string">&quot;PolicyStorageUrl=<span class="hljs-variable">$storageUrl</span>&quot;</span> <span class="hljs-string">&quot;PolicyStorageSas=<span class="hljs-variable">$storageSas</span>&quot;</span>
+</div></code></pre>
+</li>
+</ol>
+<h3 id="task-2-add-project-environment-variables">Task 2: Add project environment variables</h3>
+<p>Functions can use environment variables to retrieve configuration settings. To test your functions locally using environment variables, you must add these settings as user environment variables on your development machine or to the project settings.</p>
+<p>In this task, you create some environment variables on your LabVM, which allows for debugging your Function App locally on the LabVM.</p>
+<ol>
+<li>
+<p>In Solution Explorer, right-click the <strong>Contoso-FunctionApp</strong> project, then select <strong>Properties</strong></p>
+</li>
+<li>
+<p>Select the <strong>Debug</strong> tab.</p>
+</li>
+<li>
+<p>In the <strong>Environment Variables</strong> section, choose <strong>Add</strong>, then enter the following:</p>
+<ul>
+<li><strong>Name</strong>: Enter <strong>PolicyStorageSas</strong></li>
+<li><strong>Value</strong>: Paste in the <strong>SAS token</strong> you created and copied into a text editor in the previous exercise.</li>
+</ul>
+</li>
+<li>
+<p>Select <strong>OK</strong>.</p>
+</li>
+<li>
+<p>Select <strong>Add</strong> again, and in the New User Variable dialog, enter the following:</p>
+<ul>
+<li><strong>Name</strong>: Enter <strong>PolicyStorageUrl</strong></li>
+<li><strong>Value</strong>: Paste in the <strong>URL</strong> of the policies container you copied into a text editor in the previous exercise.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-env-variables.png" alt="Adding environment variables via visual studio project settings." title="Add environment variables"></p>
+</li>
+<li>
+<p>Save the project.</p>
+</li>
+</ol>
+<h3 id="task-3-create-an-azure-function-in-visual-studio">Task 3: Create an Azure Function in Visual Studio</h3>
+<p>In this task, you use Visual Studio to create an Azure Function. This Function serves as a serverless API for retrieving policy documents from Blob storage.</p>
+<ol>
+<li>
+<p>On your LabVM, return to Visual Studio and in the Solution explorer expand the <code>Contoso.FunctionApp</code> and then double-click <code>PolicyDocsFunction.cs</code> to open it.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-function-app-function.png" alt="The Contoso.FunctionApp project is expanded and the PolicyDocsFunction.cs file is highlighted and selected." title="Solution Explorer"></p>
+</li>
+<li>
+<p>In the <code>PolicyDocsFunction.cs</code> file, locate the <code>TODO #3</code> block (begins on line 14).</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-policydocsfunction-cs-todo-3.png" alt="The TODO #3 block is highlighted within the PolicyDocsFunction.cs code." title="PolicyDocsFunction.cs"></p>
+</li>
+<li>
+<p>Update the code within the block to allow passing in the policy holder last and policy number. Also, update it to only allow &quot;get&quot; requests. The updated code should look like the below when completed.</p>
+<pre><code class="language-csharp"><div>[<span class="hljs-meta">FunctionName(<span class="hljs-meta-string">&quot;PolicyDocs&quot;</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">async</span> Task&lt;IActionResult&gt; <span class="hljs-title">Run</span>(<span class="hljs-params">
+            [HttpTrigger(AuthorizationLevel.Function, <span class="hljs-string">&quot;get&quot;</span>, Route = <span class="hljs-string">&quot;policies/{policyHolder}/{policyNumber}&quot;</span></span>)] HttpRequest req, <span class="hljs-keyword">string</span> policyHolder, <span class="hljs-keyword">string</span> policyNumber, ILogger log)
+</span></div></code></pre>
+<blockquote>
+<p><strong>Note</strong>: Notice that in the code you removed <code>&quot;post&quot;</code> from the list of acceptable verbs, and then updated the Route of the HttpTrigger from <code>null</code> to <code>policies/{policyHolder}/{policyNumber}</code>. This allows for the function to be parameterized. You then added <code>string</code> parameters to the Run method to allow those parameters to be received and used within the function.</p>
+</blockquote>
+</li>
+<li>
+<p>Next, locate <code>TODO #4</code> within the <code>GetDocumentsFromStorage</code> method in the <code>PolicyDocsFunction.cs</code> file.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-policydocsfunction-cs-todo-4.png" alt="The TODO #4 block is highlighted within the PolicyDocsFunction.cs code." title="PolicyDocsFunction.cs"></p>
+</li>
+<li>
+<p>Update the code in the block to retrieve the <code>PolicyStorageUrl</code> and <code>PolicyStorageSas</code> values from the environment variables you added above. The completed code should look like the following:</p>
+<pre><code class="language-csharp"><div><span class="hljs-keyword">var</span> containerUri = Environment.GetEnvironmentVariable(<span class="hljs-string">&quot;PolicyStorageUrl&quot;</span>);
+<span class="hljs-keyword">var</span> sasToken = Environment.GetEnvironmentVariable(<span class="hljs-string">&quot;PolicyStorageSas&quot;</span>);
+</div></code></pre>
+<blockquote>
+<p><strong>Note</strong>: When the API is deployed to an Azure API App, <code>Environment.GetEnvironmentVariables()</code> looks for the specified values in the configured application settings.</p>
+</blockquote>
+</li>
+<li>
+<p>Save <code>PolicyDocsFunction.cs</code>.</p>
+</li>
+<li>
+<p>Take a moment to review the code in the Function, and understand how it functions. It uses an <code>HttpTrigger</code>, which means the function executes whenever it receives an Http request. You added configuration to restrict the Http requests to only <code>GET</code> requests, and the requests must be in format <code>https://&lt;function-name&gt;.azurewebsites.net/policies/{policyHolder}/{policyName}</code> for the Function App to route the request to the <code>PolicyDocs</code> function. Within the function, an Http request is being made to your Storage account <code>policy</code> container URL to retrieve the PDF document for the specified policy holder and policy number. That is then returned to the browser as a PDF attachment.</p>
+</li>
+<li>
+<p>Your Function App is now fully configured to retrieve parameterized values and then retrieve documents from the <code>policies</code> container in your Storage account.</p>
+</li>
+</ol>
+<h3 id="task-4-test-the-function-locally">Task 4: Test the function locally</h3>
+<p>In this task, you run your Function locally through the Visual Studio debugger, to verify that it is properly configured and able to retrieve documents from the <code>policy</code> container in your Storage account.</p>
+<blockquote>
+<p><strong>IMPORTANT</strong>: Internet Explorer on Windows Server 2019 does not include functionality to open PDF documents. To view the downloaded policy documents in this task, you need to <a href="https://www.google.com/chrome/">download and install the Chrome browser</a> on your LabVM.</p>
+</blockquote>
+<ol>
+<li>
+<p>In the Visual Studio Solution Explorer, right-click the <code>Contoso.FunctionApp</code> project, and then select <strong>Debug</strong> and <strong>Start new instance</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-function-app-debug.png" alt="In the Visual Studio Solution Explorer, the context menu for the Contoso.FunctionApp project is displayed, with Debug selected and Start new instance highlighted." title="Solution Explorer"></p>
+</li>
+<li>
+<p>If prompted, allow the function app to access your local machine resources.</p>
+</li>
+<li>
+<p>A new console dialog appears, and the function app is loaded. At the of the console, note the output, which provides the local URL of the Function.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-function-app-debug-console.png" alt="The Function console window is displayed with the  local URL highlighted." title="Debug"></p>
+</li>
+<li>
+<p>Copy the URL that appears after <code>PolicyDocs</code>, and paste it into a text editor. The copied value should look like:</p>
+<pre><code class="language-http"><div><span class="hljs-attribute">http://localhost:7071/api/policies/{policyHolder}/{policyNumber}
+</span></div></code></pre>
+</li>
+<li>
+<p>In the text editor, you need to replace the tokenized values as follows:</p>
+<ul>
+<li><code>{policyHolder}</code>: Acevedo</li>
+<li><code>{policyNumber}</code>: ACE5605VZZ2ACQ</li>
+</ul>
+<p>The updated URL should now look like:</p>
+<pre><code class="language-http"><div><span class="hljs-attribute">http://localhost:7071/api/policies/Acevedo/ACE5605VZZ2ACQ
+</span></div></code></pre>
+</li>
+<li>
+<p>Paste the updated into the address bar of a new Chrome web browser window and press Enter.</p>
+</li>
+<li>
+<p>In the browser, the policy document opens in a new window.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-function-app-debug-browser.png" alt="The downloaded PDF document is displayed in the web browser." title="Policy document download"></p>
+</li>
+<li>
+<p>You've confirmed the function is working properly. Stop your Visual Studio debugging session by closing the console window or selecting the stop button on the Visual Studio toolbar. In the next task, you deploy the function to Azure.</p>
+</li>
+</ol>
+<h3 id="task-5-deploy-the-function-to-your-azure-function-app">Task 5: Deploy the function to your Azure Function App</h3>
+<p>In this task, you deploy your function into an Azure Function App, where the web application uses it to retrieve policy documents.</p>
+<ol>
+<li>
+<p>In Visual Studio on your LabVM, right-click on the <code>Contoso.FunctionApp</code> project in the Solution Explorer, and then select <strong>Publish</strong> from the context menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-function-app-publish.png" alt="Publish in highlighted in the context menu for the Contoso.FunctionApp project." title="Publish"></p>
+</li>
+<li>
+<p>On the <strong>Pick a publish target</strong> dialog, select <strong>Azure Functions Consumption Plan</strong>, choose <strong>Select Existing</strong>, leave Run from package file checked, and then select <strong>Create Profile</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-function-app-publish-target.png" alt="Select existing is selected and highlighted on the Pick a publish target dialog." title="Publish"></p>
+</li>
+<li>
+<p>On the App Service dialog, select your Azure subscription, logging in if necessary on with your credentials and ensure the subscription you published earlier is selected, then select your Function App (resource starting with &quot;contoso-<strong>func</strong>&quot;) under your hands-on-lab-SUFFIX resource group.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/vs-function-app-publish-app-service.png" alt="Select Existing App Service window. App Services are listed under hands-on lab resource group and contoso-func App Service is highlighted." title="Select App Service"></p>
+</li>
+<li>
+<p>Select <strong>OK</strong>.</p>
+</li>
+<li>
+<p>Back on the Visual Studio Publish page for the <code>Contoso.FunctionApp</code> project, select <strong>Publish</strong> to start the process of publishing your Web API to your Azure API App.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/visual-studio-publish-function.png" alt="The Publish button is highlighted next to the newly created publish profile on the Publish page." title="Publish"></p>
+</li>
+<li>
+<p>Ensure you see a publish succeeded message in the Visual Studio Output panel.</p>
+</li>
+<li>
+<p>The Azure Function App is now ready for use within the PolicyConnect web application.</p>
+</li>
+</ol>
+<h3 id="task-6-enable-application-insights-on-the-function-app">Task 6: Enable Application Insights on the Function App</h3>
+<p>In this task, you add Application Insights to your Function App in the Azure Portal, to be able to collect insights into requests against the Function.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>Function App</strong> by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and selecting the <strong>contoso-func-UniqueId</strong> App service from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-resources-function-app.png" alt="The Function App resource is highlighted in the list of resources." title="Function App"></p>
+</li>
+<li>
+<p>On the Function App blade, select <strong>Configure Application Insights to capture function logs.</strong> at the top of the blade.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/function-app-add-app-insights.png" alt="The Configure Application Insights to capture function logs is highlighted on the function app blade." title="Function App"></p>
+</li>
+<li>
+<p>On the Application Insights blade, select <strong>Create new resource</strong> and enter a globally unique name, such as contoso-ai-SUFFIX, and then select <strong>OK</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/function-app-app-insights.png" alt="The Create New Application Insights blade is displayed with a unique name set under Create new resource." title="Add Application Insights"></p>
+</li>
+<li>
+<p>Once the Application Insights resource is created, return to the Overview blade of your Function App, and select <strong>Application Insights</strong> under Configured Features.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/function-app-app-insights-link.png" alt="Application Insights is highlighted under Configured features." title="Function App"></p>
+</li>
+<li>
+<p>On the Application Insights blade, select <strong>Live Metrics Stream</strong> from the left-hand menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/app-insights-live-metrics-stream.png" alt="Live Metrics Stream is highlighted in the left-hand menu on the Application Insights blade." title="Application Insights"></p>
+<blockquote>
+<p><strong>Note</strong>: You may see a message that your app is offline. You handle this below.</p>
+</blockquote>
+</li>
+<li>
+<p>Leave the Live Metrics Stream window open for reference in the next task.</p>
+</li>
+</ol>
+<h3 id="task-7-add-function-app-url-to-your-web-app-application-settings">Task 7: Add Function App URL to your Web App Application settings</h3>
+<p>In this task, you add the URL of your Azure Function App to the Application settings configuration of your Web App.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, select the Azure Cloud Shell icon from the menu at the top right of the screen.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-icon.png" alt="The Azure Cloud Shell icon is highlighted in the Azure portal's top menu." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>In the Cloud Shell window that opens at the bottom of your browser window, select <strong>PowerShell</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-select-powershell.png" alt="In the Welcome to Azure Cloud Shell window, PowerShell is highlighted." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>After a moment, you receive a message that you have successfully requested a Cloud Shell, and be presented with a PS Azure prompt.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-ps-azure-prompt.png" alt="In the Azure Cloud Shell dialog, a message is displayed that requesting a Cloud Shell succeeded, and the PS Azure prompt is displayed." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>At the prompt, retrieve your Function App URL by running the following command at the Cloud Shell prompt, replacing <code>&lt;your-resource-group-name&gt;</code> with your resource group name:</p>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$resourceGroup</span> = <span class="hljs-string">&quot;&lt;your-resource-group-name&gt;&quot;</span>
+az functionapp list <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-output</span> table
+</div></code></pre>
+<blockquote>
+<p><strong>Note</strong>: If you have multiple Azure subscriptions, and the account you are using for this hands-on lab is not your default account, you may need to run <code>az account list --output table</code> at the Azure Cloud Shell prompt to output a list of your subscriptions, then copy the Subscription Id of the account you are using for this lab, and then run <code>az account set --subscription &lt;your-subscription-id&gt;</code> to set the appropriate account for the Azure CLI commands.</p>
+</blockquote>
+</li>
+<li>
+<p>In the output, copy the <strong>DefaultHostName</strong> value into a text editor for use below.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-functionapp-list-host-name.png" alt="The Function App DefaultHostName value is highlighted in the output of the command above." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>At the Cloud Shell prompt, run the following command to retrieve both your Web App name:</p>
+<pre><code class="language-powershell"><div>az webapp list <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-output</span> table
+</div></code></pre>
+</li>
+<li>
+<p>In the output, copy the name of Web App (the resource name starts with contoso-<strong>web</strong>) into a text editor for use below.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-webapp-list-web-app-name.png" alt="The Web App Name value is highlighted in the output of the command above." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>The last setting you need is the Default Host Key for your Function App. To get this, navigate to your Function App resource in the Azure portal, and on the overview blade, select <strong>Function app settings</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/function-app-configured-features-app-settings.png" alt="Function app settings is highlighted under Configured Features" title="Function App"></p>
+</li>
+<li>
+<p>On the Function app settings tab, locate the <strong>Host Keys</strong> section, and copy the <strong>default</strong> key by selecting the <strong>Copy</strong> Action link to the right of the key. Paste the value into a text editor for reference below.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/function-app-settings-default-host-key.png" alt="The Copy button for the default host key is highlighted." title="Function App"></p>
+</li>
+<li>
+<p>Next replace the tokenized values in the following command as specified below, and then run it from the Azure Cloud Shell command prompt.</p>
+<ul>
+<li><code>&lt;your-web-app-name&gt;</code>: Replace with your Web App name, which you copied in above.</li>
+<li><code>&lt;your-function-app-default-host-name&gt;</code>: Replace with the <code>DefaultHostName</code> of your Function App, which you copied into a text editor above.</li>
+<li><code>&lt;your-function-app-default-host-key&gt;</code>: Replace with the default host key of your Function App, which you copied into a text editor above.</li>
+</ul>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$webAppName</span> = <span class="hljs-string">&quot;&lt;your-web-app-name&gt;&quot;</span>
+<span class="hljs-variable">$defaultHostName</span> = <span class="hljs-string">&quot;&lt;your-function-app-default-host-name&gt;&quot;</span>
+<span class="hljs-variable">$defaultHostKey</span> = <span class="hljs-string">&quot;&lt;your-function-app-default-host-key&gt;&quot;</span>
+az webapp config appsettings <span class="hljs-built_in">set</span> <span class="hljs-literal">-n</span> <span class="hljs-variable">$webAppName</span> <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-settings</span> <span class="hljs-string">&quot;PolicyDocumentsPath=https://<span class="hljs-variable">$defaultHostName</span>/api/policies/{policyHolder}/{policyNumber}?code=<span class="hljs-variable">$defaultHostKey</span>&quot;</span>
+</div></code></pre>
+</li>
+<li>
+<p>In the output, the newly added <code>PolicyDocumentsPath</code> setting in your Web App's application settings is visible.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-webapp-config-output-policy-documents-path.png" alt="The ApiUrl app setting in highlighted in the output of the previous command." title="Azure Cloud Shell"></p>
+</li>
+</ol>
+<h3 id="task-8-test-document-retrieval-from-web-app">Task 8: Test document retrieval from web app</h3>
+<p>In this task, you open the PolicyConnect web app and download a policy document. Recall from above that this resulted in a page not found error when you tried it previously.</p>
+<ol>
+<li>
+<p>Open a web browser and navigate to the URL for your published Web App.</p>
+<blockquote>
+<p><strong>Note</strong>: You can retrieve the URL from the Overview blade of your Web App resource in the Azure portal if you aren't sure what it is.</p>
+</blockquote>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-url.png" alt="The URL field in highlighted on the Web App overview blade." title="Web App"></p>
+</li>
+<li>
+<p>In the PolicyConnect web page, enter the following credentials to log in, and then select <strong>Log in</strong>:</p>
+<ul>
+<li><strong>Username</strong>: demouser</li>
+<li><strong>Password</strong>: Password.1!!</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-login.png" alt="The credentials above are entered into the login screen for the PolicyConnect web site." title="PolicyConnect"></p>
+</li>
+<li>
+<p>Once logged in, select <strong>Managed Policy Holders</strong> from the top menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-managed-policy-holders.png" alt="Manage Policy Holders is highlighted in the PolicyConnect web site's menu." title="PolicyConnect"></p>
+</li>
+<li>
+<p>On the Policy Holders page, you see a list of policy holders, and information about their policies. This information was pulled from your Azure SQL Database using the connection string stored in Azure Key Vault. Select the <strong>Details</strong> link next to one of the records.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-policy-holders-data.png" alt="Policy holder data is displayed on the page." title="PolicyConnect"></p>
+</li>
+<li>
+<p>On the Policy Holder Details page, hover your mouse cursor over the document link under <strong>File Path</strong>, and notice that the path that is displayed at the bottom now points to your Function App, and that the policy holder's last name and policy number are inserted into the path.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/web-app-policy-holder-details-file-path.png" alt="The PDF document link is highlighted and the underlying URL is highlighted at the bottom of the browser window." title="PolicyConnect"></p>
+</li>
+<li>
+<p>Now, select the link under <strong>File Path</strong>, and download the policy document.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/policy-document-download.png" alt="The download policy document is displayed." title="PolicyConnect"></p>
+</li>
+</ol>
+<h3 id="task-9-view-live-metrics-stream">Task 9: View Live Metrics Stream</h3>
+<ol>
+<li>
+<p>Return to the Application Insights Live Metrics Stream in the Azure portal.</p>
+</li>
+<li>
+<p>The page should now display a dashboard featuring telemetry for requests hitting your Function App. Look under the Sample Telemetry section on the right, and you locate the document request you just made. Select the Trace whose message begins with &quot;PolicyDocs function received a request...&quot;, and observe the details in the panel below it.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/application-insights-sample-telemetry.png" alt="Sample telemetry data is displayed on the Live Metrics Stream page." title="Application Insights"></p>
+</li>
+</ol>
+<h2 id="exercise-8-add-cognitive-search-for-policy-documents">Exercise 8: Add Cognitive Search for policy documents</h2>
+<p>Duration: 15 minutes</p>
+<p>Contoso has requested the ability to perform full-text searching on policy documents. Previously, they have not been able to extract information from the documents in a usable way, but they have read about <a href="https://docs.microsoft.com/azure/search/cognitive-search-concept-intro">cognitive search with the Azure Cognitive Search Service</a>, and are interested to learn if it could be used to make the data in their search index more useful. In this exercise, you configure cognitive search for the policies blob storage container.</p>
+<h3 id="task-1-add-azure-cognitive-search-to-storage-account">Task 1: Add Azure Cognitive Search to Storage account</h3>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>Storage account</strong> resource by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>contoso-UniqueId</strong> Storage account resource from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/resource-group-resources-storage-account.png" alt="The Storage Account resource is highlighted in the list of resources." title="Storage account"></p>
+</li>
+<li>
+<p>On the Storage account blade, select <strong>Add Azure Search</strong> from the left-hand menu, and then on the <strong>Select a search service</strong> tab, select your search service.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/add-azure-search-select-a-search-service.png" alt="Add Azure Search is selected and highlighted in the left-hand menu, and the search service is highlighted on the Select a search service tab." title="Add Azure Search"></p>
+</li>
+<li>
+<p>Select <strong>Next: Connect to your data</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Connect to your data</strong> tab, enter the following:</p>
+<ul>
+<li><strong>Data Source</strong>: Leave the value of <strong>Azure Blob Storage</strong> selected.</li>
+<li><strong>Name</strong>: Enter <strong>policy-docs</strong>.</li>
+<li><strong>Data to extract</strong>: Select <strong>Content and metadata</strong>.</li>
+<li><strong>Parsing mode</strong>: Leave set to <strong>Default</strong>.</li>
+<li><strong>Connection string</strong>: Leave this set to the pre-populated connection string for your Storage account.</li>
+<li><strong>Container name</strong>: Enter <strong>policies</strong>.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/add-azure-search-connect-to-your-data.png" alt="On the Connect to your data tab, the values specified above are entered in to the form." title="Add Azure Search"></p>
+</li>
+<li>
+<p>Select <strong>Next: Add cognitive search (Optional)</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Add cognitive search</strong> tab, set the following configuration:</p>
+<ul>
+<li>Expand Attach Cognitive Services, and select your Cognitive Services account.</li>
+<li>Expand Add enrichments:
+<ul>
+<li><strong>Skillset name</strong>: Enter <strong>policy-docs-skillset</strong>.</li>
+<li><strong>Text cognitive skills</strong>: Check this box to select all the skills.</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/add-azure-search-add-cognitive-skills.png" alt="The configuration specified above is entered into the Add cognitive search tab." title="Add Azure Search"></p>
+</li>
+<li>
+<p>Select <strong>Next: Customize target index</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Customize target index tab</strong>, do the following:</p>
+<ul>
+<li><strong>Index name</strong>: Enter <strong>policy-docs-index</strong>.</li>
+<li>Check the top Retrievable box, to check all items underneath it.</li>
+<li>Check the top Searchable box, to check all items underneath it.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/add-azure-search-customize-target-index.png" alt="The Customize target index tab is displayed with the Index name, Retrievable checkbox and Searchable checkbox highlighted." title="Add Azure Search"></p>
+</li>
+<li>
+<p>Select <strong>Next: Create an indexer</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Create an indexer</strong> tab, enter <strong>policy-docs-indexer</strong> as the name, select <strong>Once</strong> for the schedule, and then select <strong>Submit</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/add-azure-search-create-an-indexer.png" alt="The name field and submit button are highlighted on the Create an indexer tab." title="Add Azure Search"></p>
+<blockquote>
+<p><strong>Note</strong>: For this hands-on lab, we are only running the indexer once, at the time of creation. In a production application, you would probably choose a schedule such as hourly or daily to run the indexer. This would allow you to bring in any new data that arrives in the target blob storage account.</p>
+</blockquote>
+</li>
+<li>
+<p>Within a few seconds, you receive a notification in the Azure portal that the import was successfully configured.</p>
+</li>
+</ol>
+<h3 id="task-2-review-search-results">Task 2: Review search results</h3>
+<p>In this task, you run a query against your search index to review the enrichments added by cognitive search to policy documents.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, navigate to your <strong>Search service</strong> resource by selecting <strong>Resource groups</strong> from Azure services list, selecting the <strong>hands-on-lab-SUFFIX</strong> resource group, and then selecting the <strong>contoso-search-UniqueId</strong> Search service resource from the list of resources.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-resources-search.png" alt="The Search service resource is highlighted in the list of resources." title="Search service"></p>
+</li>
+<li>
+<p>On the Search service blade, select <strong>Indexers</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-search-indexers.png" alt="In Contoso Insurance search service, Indexers is highlighted and selected." title="Search Service"></p>
+</li>
+<li>
+<p>Note the status of the policy-docs-indexer. Once the indexer has run, it should display a status of <strong>Success</strong>. If the status is <strong>In progress</strong>, select <strong>Refresh</strong> every 20-30 seconds until it changes to <strong>Success</strong>.</p>
+<blockquote>
+<p>If you see a status of <strong>No history</strong>, select the policy-docs-indexer, and select <strong>Run</strong> on the Indexer blade.</p>
+</blockquote>
+</li>
+<li>
+<p>Now select <strong>Search explorer</strong> in the Search service blade toolbar.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/search-service-explorer.png" alt="Search explorer is highlighted on the Search service toolbar." title="Search service"></p>
+</li>
+<li>
+<p>On the <strong>Search explorer</strong> blade, select <strong>Search</strong>.</p>
+</li>
+<li>
+<p>In the search results, inspect the returned documents, paying special attention to the fields added by the cognitive skills you added when creating the search index. These fields are <code>People</code>, <code>Organizations</code>, <code>Locations</code>, <code>Keyphrases</code>, <code>Language</code>, and <code>Translated_Text</code>.</p>
+<pre><code class="language-json"><div>{
+     <span class="hljs-attr">&quot;@search.score&quot;</span>: <span class="hljs-number">1</span>,
+     <span class="hljs-attr">&quot;content&quot;</span>: <span class="hljs-string">&quot;\nContoso Insurance - Your Platinum Policy\n\nPolicy Holder: Igor Cooke\nPolicy #: COO13CE2ZLOKD\nEffective Coverage Dates: 22 July 2008 - 13 August 2041\nAddress: P.O. Box 442, 802 Pellentesque AveTaupo, NI 240\nPolicy Amount: $48,247.00\nDeductible: $250.00\nOut of Pocket Max: $1,000.00\n\nDEPENDENTS\nFirst Name Date of Birth\n\nIma 21 January 2002\nEcho 12 August 2003\n\nPage Summary\nDependents\n\n1 / 0 22 July 2008\n\n\nworksheet1\n\n\t\tFirst Name\t\tDate of Birth\n\n\t\tIma\t\t21 January 2002\n\n\t\tEcho\t\t12 August 2003\n\n\n\n\n\n\n&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_content_type&quot;</span>: <span class="hljs-string">&quot;application/octet-stream&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_size&quot;</span>: <span class="hljs-number">142754</span>,
+     <span class="hljs-attr">&quot;metadata_storage_last_modified&quot;</span>: <span class="hljs-string">&quot;2019-10-23T21:42:23Z&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_content_md5&quot;</span>: <span class="hljs-string">&quot;ksk3JZT5QPkHfAR0F17ZEw==&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_name&quot;</span>: <span class="hljs-string">&quot;Cooke-COO13CE2ZLOKD.pdf&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_path&quot;</span>: <span class="hljs-string">&quot;aHR0cHM6Ly9ob2xzdG9yYWdlYWNjb3VudC5ibG9iLmNvcmUud2luZG93cy5uZXQvcG9saWNpZXMvQ29va2UtQ09PMTNDRTJaTE9LRC5wZGY1&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_content_type&quot;</span>: <span class="hljs-string">&quot;application/pdf&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_language&quot;</span>: <span class="hljs-string">&quot;en&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_author&quot;</span>: <span class="hljs-string">&quot;Contoso Insurance&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_title&quot;</span>: <span class="hljs-string">&quot;Your Policy&quot;</span>,
+     <span class="hljs-attr">&quot;People&quot;</span>: [
+         <span class="hljs-string">&quot;Igor Cooke&quot;</span>,
+         <span class="hljs-string">&quot;Cooke&quot;</span>,
+         <span class="hljs-string">&quot;Max&quot;</span>
+     ],
+     <span class="hljs-attr">&quot;Organizations&quot;</span>: [
+         <span class="hljs-string">&quot;Contoso Insurance - Your Platinum Policy&quot;</span>,
+         <span class="hljs-string">&quot;NI&quot;</span>,
+         <span class="hljs-string">&quot;DEPENDENTS\nFirst&quot;</span>,
+         <span class="hljs-string">&quot;Ima&quot;</span>,
+         <span class="hljs-string">&quot;Page Summary\nDependents&quot;</span>,
+         <span class="hljs-string">&quot;Echo&quot;</span>
+     ],
+     <span class="hljs-attr">&quot;Locations&quot;</span>: [],
+     <span class="hljs-attr">&quot;Keyphrases&quot;</span>: [
+         <span class="hljs-string">&quot;Platinum Policy&quot;</span>,
+         <span class="hljs-string">&quot;Policy Holder&quot;</span>,
+         <span class="hljs-string">&quot;Date of Birth&quot;</span>,
+         <span class="hljs-string">&quot;Echo&quot;</span>,
+         <span class="hljs-string">&quot;DEPENDENTS&quot;</span>,
+         <span class="hljs-string">&quot;Ima&quot;</span>,
+         <span class="hljs-string">&quot;Box&quot;</span>,
+         <span class="hljs-string">&quot;Pellentesque AveTaupo&quot;</span>,
+         <span class="hljs-string">&quot;Address&quot;</span>,
+         <span class="hljs-string">&quot;NI&quot;</span>,
+         <span class="hljs-string">&quot;Contoso Insurance&quot;</span>,
+         <span class="hljs-string">&quot;Igor Cooke&quot;</span>,
+         <span class="hljs-string">&quot;Effective Coverage Dates&quot;</span>,
+         <span class="hljs-string">&quot;Pocket Max&quot;</span>,
+         <span class="hljs-string">&quot;Page Summary&quot;</span>,
+         <span class="hljs-string">&quot;COO13CE2ZLOKD&quot;</span>,
+         <span class="hljs-string">&quot;worksheet1&quot;</span>
+     ],
+     <span class="hljs-attr">&quot;Language&quot;</span>: <span class="hljs-string">&quot;en&quot;</span>,
+     <span class="hljs-attr">&quot;Translated_Text&quot;</span>: <span class="hljs-string">&quot;\nContoso Insurance - Your Platinum Policy\n\nPolicy Holder: Igor Cooke\nPolicy #: COO13CE2ZLOKD\nEffective Coverage Dates: 22 July 2008 - 13 August 2041\nAddress: P.O. Box 442, 802 Pellentesque AveTaupo, NI 240\nPolicy Amount: $48,247.00\nDeductible: $250.00\nOut of Pocket Max: $1,000.00\n\nDEPENDENTS\nFirst Name Date of Birth\n\nIma 21 January 2002\nEcho 12 August 2003\n\nPage Summary\nDependents\n\n1 / 0 22 July 2008\n\nworksheet1\n\nFirst Name\t\tDate of Birth\n\nIma\t\t21 January 2002\n\nEcho\t\t12 August 2003\n\n&quot;</span>
+}
+</div></code></pre>
+</li>
+<li>
+<p>For comparison, the same document without cognitive search skills enabled would look similar to the following:</p>
+<pre><code class="language-json"><div>{
+     <span class="hljs-attr">&quot;@search.score&quot;</span>: <span class="hljs-number">1</span>,
+     <span class="hljs-attr">&quot;content&quot;</span>: <span class="hljs-string">&quot;\nContoso Insurance - Your Platinum Policy\n\nPolicy Holder: Igor Cooke\nPolicy #: COO13CE2ZLOKD\nEffective Coverage Dates: 22 July 2008 - 13 August 2041\nAddress: P.O. Box 442, 802 Pellentesque AveTaupo, NI 240\nPolicy Amount: $48,247.00\nDeductible: $250.00\nOut of Pocket Max: $1,000.00\n\nDEPENDENTS\nFirst Name Date of Birth\n\nIma 21 January 2002\nEcho 12 August 2003\n\nPage Summary\nDependents\n\n1 / 0 22 July 2008\n\n\nworksheet1\n\n\t\tFirst Name\t\tDate of Birth\n\n\t\tIma\t\t21 January 2002\n\n\t\tEcho\t\t12 August 2003\n\n\n\n\n\n\n&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_content_type&quot;</span>: <span class="hljs-string">&quot;application/octet-stream&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_size&quot;</span>: <span class="hljs-number">142754</span>,
+     <span class="hljs-attr">&quot;metadata_storage_last_modified&quot;</span>: <span class="hljs-string">&quot;2019-10-23T21:42:23Z&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_content_md5&quot;</span>: <span class="hljs-string">&quot;ksk3JZT5QPkHfAR0F17ZEw==&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_name&quot;</span>: <span class="hljs-string">&quot;Cooke-COO13CE2ZLOKD.pdf&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_storage_path&quot;</span>: <span class="hljs-string">&quot;aHR0cHM6Ly9ob2xzdG9yYWdlYWNjb3VudC5ibG9iLmNvcmUud2luZG93cy5uZXQvcG9saWNpZXMvQ29va2UtQ09PMTNDRTJaTE9LRC5wZGY1&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_content_type&quot;</span>: <span class="hljs-string">&quot;application/pdf&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_language&quot;</span>: <span class="hljs-string">&quot;en&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_author&quot;</span>: <span class="hljs-string">&quot;Contoso Insurance&quot;</span>,
+     <span class="hljs-attr">&quot;metadata_title&quot;</span>: <span class="hljs-string">&quot;Your Policy&quot;</span>
+}
+</div></code></pre>
+</li>
+<li>
+<p>As you can see from the search results, the addition of cognitive skills adds valuable metadata to your search index, and helps to make documents and their contents more usable by Contoso.</p>
+</li>
+</ol>
+<h2 id="exercise-9-import-and-publish-apis-into-apim">Exercise 9: Import and publish APIs into APIM</h2>
+<p>Duration: 30 minutes</p>
+<p>In this exercise, you publish your API App and Function App API endpoints through API Management.</p>
+<h3 id="task-1-import-api-app">Task 1: Import API App</h3>
+<p>In this task, you import your API App into APIM, using the OpenAPI specification, which leverages the Swagger definition associated with your API app.</p>
+<ol>
+<li>
+<p>In the Azure portal, navigate to your <strong>API Management Service</strong> by selecting it from the list of resources under your hands-on-lab-SUFFIX resource group.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-resources-api-management.png" alt="The API Management service is highlighted in the resources list." title="API Management service"></p>
+</li>
+<li>
+<p>On the API Management service select the <strong>APIs</strong> blade, and then select <strong>+ Add API</strong> and select <strong>OpenAPI</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/apim-add-api.png" alt="API Management Service with APIs blade selected. A button to add a new OpenAPI is highlighted" title="API Management Service Add OpenAPI"></p>
+</li>
+<li>
+<p>A dialog to Create from OpenAPI specification is displayed. Select <strong>Full</strong> to expand the options that need to be entered.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/e8-t1-create-api-dialog.png" alt="The Create from OpenAPI specification dialog is displayed and Full is highlighted" title="Create from OpenAPI specification"></p>
+</li>
+<li>
+<p>Retrieve the value for the OpenAPI specification field from the <code>swagger</code> page of your API APP. (This is the URL of your API app, which you can retrieve from its overview blade in the Azure portal) plus &quot;/swagger&quot;. (e.g., <a href="https://contoso-api-jt7yc3zphxfda.azurewebsites.net/swagger">https://contoso-api-jt7yc3zphxfda.azurewebsites.net/swagger</a>).</p>
+</li>
+<li>
+<p>On the Swagger page for your API App, right-click on the <code>swagger/v1/swagger.json</code> file link just below the PolicyConnect API title, and select <strong>Copy link address</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/swagger-copy-json-link-address.png" alt="A context menu is displayed next to the swagger/v1/swagger.json link, and Copy link address is highlighted." title="Swagger"></p>
+</li>
+<li>
+<p>Return to the API Management Create from OpenAPI specification dialog, and enter the following:</p>
+<ul>
+<li><strong>OpenAPI specification</strong>: Paste the copied link address from your Swagger page.</li>
+<li><strong>Display name</strong>: This is automatically populated from the Swagger definition.</li>
+<li><strong>Name</strong>: This is automatically populated from the Swagger definition.</li>
+<li><strong>URL scheme</strong>: Choose <strong>HTTPS</strong>.</li>
+<li><strong>Products</strong>: Select the <strong>Unlimited</strong> tag by clicking the field and selecting it from the dropdown list.</li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/open-api-dialog-complete.png" alt="Create from OpenAPI specification dialog is filled and the create button is highlighted." title="Create OpenAPI specification"></p>
+</li>
+<li>
+<p>After creating the API, select the <strong>PolicyConnect API</strong> from the list of APIs on the left, and on the Design tab, with All operations selected, select the <strong>Policies</strong> icon in the Inbound process tile.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/apim-inbound-processing.png" alt="On the All operations section, the Inbound processing policies icon is highlighted." title="API Management"></p>
+</li>
+<li>
+<p>On the Policies screen, insert the code below between the <code>&lt;inbound&gt;&lt;/inbound&gt;</code> tags, and below the <code>&lt;base /&gt;</code> tag. You need to <strong>replace</strong> <code>&lt;your-web-app-url&gt;</code> between the <code>&lt;origin&gt;&lt;/origin&gt;</code> tags with the URL for your Web App.</p>
+<pre><code class="language-xml"><div><span class="hljs-tag">&lt;<span class="hljs-name">cors</span> <span class="hljs-attr">allow-credentials</span>=<span class="hljs-string">&quot;true&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">allowed-origins</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">origin</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">your-web-app-url</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">origin</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">allowed-origins</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">allowed-methods</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">method</span>&gt;</span>*<span class="hljs-tag">&lt;/<span class="hljs-name">method</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">allowed-methods</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">allowed-headers</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">header</span>&gt;</span>*<span class="hljs-tag">&lt;/<span class="hljs-name">header</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">allowed-headers</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">expose-headers</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">header</span>&gt;</span>*<span class="hljs-tag">&lt;/<span class="hljs-name">header</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">expose-headers</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">cors</span>&gt;</span>
+</div></code></pre>
+<p>Your updated policies value should look similar to the following:</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/apim-policies.png" alt="The XML code above has been inserted into the Policies XML document." title="API Management"></p>
+<blockquote>
+<p><strong>Note</strong>: The policy added above is for handling cross-origin resource sharing (CORS). If you are testing the web app locally, you need to add another <code>&lt;origin&gt;&lt;/origin&gt;</code> tag within <code>&lt;allowed-origins&gt;&lt;/allowed-origins&gt;</code> that contains <code>https://localhost:&lt;port-number&gt;</code>, where <code>&lt;port-number&gt;</code> is the port assigned by your debugger (as is shown in the screenshot above).</p>
+</blockquote>
+</li>
+<li>
+<p>Select <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Next, select the <strong>Settings</strong> tab. On the Settings tab, enter the URL of your API App, starting with <code>https://</code>. <strong>Note</strong>: You can copy this value from the text editor you have been using to store values throughout this lab.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/apim-policyconnect-api-settings.png" alt="The settings tab for the PolicyConnect API is displayed, with the API App url entered into the Web Service URL field." title="API Settings"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong> on the Settings tab.</p>
+</li>
+</ol>
+<h3 id="task-2-import-function-app">Task 2: Import Function App</h3>
+<p>In this task, you import your Function App into APIM.</p>
+<ol>
+<li>
+<p>Select <strong>+ Add API</strong> again, and this time select <strong>Function App</strong> as the source of the API.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/api-management-add-function-app.png" alt="Add API is highlighted in the left-hand menu, and the Function App tile is highlighted." title="API Management"></p>
+</li>
+<li>
+<p>On the Create from Function App dialog, select the <strong>Browse</strong> button next to the Function App field.</p>
+</li>
+<li>
+<p>In the Import Azure Functions blade, select <strong>Function App</strong> and then select your Function App from the list, and choose <strong>Select</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/select-function-app.png" alt="The Select Function App dialog is displayed, and hands-on-lab-SUFFIX is entered into the filter box." title="Select Function App"></p>
+<blockquote>
+<p><strong>Note</strong>: You can filter using your resource group name, if needed.</p>
+</blockquote>
+</li>
+<li>
+<p>Back on the Import Azure Functions blade, ensure the PolicyDocs function is checked, and choose <strong>Select</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/import-azure-functions.png" alt="The Import Azure Functions blade is displayed, with the configuration specified above set." title="Import Azure Functions"></p>
+</li>
+<li>
+<p>Back on the Create from Function App dialog in APIM, all of the properties for the API are set from your Azure Function. Set the Products to Unlimited, as you did previously. Note, you may need to select <strong>Full</strong> at the top to see the Products box.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/apim-create-from-function-app.png" alt="On the Create from Function App dialog, the values specified above are entered into the form." title="API Management"></p>
+</li>
+<li>
+<p>Select <strong>Create</strong>.</p>
+</li>
+</ol>
+<h3 id="task-3-open-developer-portal-and-retrieve-you-api-key">Task 3: Open Developer Portal and retrieve you API key</h3>
+<p>In this task, you quickly look at the APIs in the Developer Portal, and retrieve your key. The Developer Portal allows you to check the list of APIs and endpoints as well as find useful information about them.</p>
+<ol>
+<li>
+<p>Open the APIM Developer Portal by selecting <strong>Developer portal (legacy)</strong> from the Overview blade of your API Management service in the Azure portal.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/apim-developer-portal.png" alt="On the APIM Service Overview blade the link for the developer portal is highlighted." title="Developer Portal"></p>
+</li>
+<li>
+<p>In the Azure API Management portal, select <strong>APIs</strong> from the top menu, and then select the API associated with your Function App.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/dev-portal-apis-function-app.png" alt="In the Developer portal, the APIs menu item is selected and highlighted, and the Function App API is highlighted." title="Developer portal"></p>
+</li>
+<li>
+<p>The API page allows you to view and test your API endpoints directly in the Developer portal.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/apim-endpoint-details.png" alt="The Profile link is highlighted on the API page for the Function App API." title="API Management"></p>
+</li>
+<li>
+<p>Copy the highlighted request URL. This is the new value you use for the <code>PolicyDocumentsPath</code> setting in the next task.</p>
+<blockquote>
+<p><strong>Note</strong>: We don't need to do this for the PolicyConnect API because the path is defined by the Swagger definition. The only thing that needs to change for that is the base URL, which points to APIM and not your API App.</p>
+</blockquote>
+</li>
+<li>
+<p>Next, select the <strong>Administrator</strong> drop down located near the top right of the API page, and then select <strong>Profile</strong> from the fly-out menu. The <strong>Profile</strong> page allows you to retrieve your <code>Ocp-Apim-Subscription-Key</code> value, which you need to retrieve so the PolicyConnect web application can access the APIs through APIM.</p>
+</li>
+<li>
+<p>On the Profile page, select <strong>Show</strong> next to the Primary Key for the <strong>Unlimited</strong> Product, copy the key value and paste it into a text editor for use below.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/apim-dev-portal-subscription-keys.png" alt="The Primary Key field is highlighted under the Unlimited subscription." title="API Management Developer Portal"></p>
+</li>
+</ol>
+<h3 id="task-4-update-web-app-to-use-api-management-endpoints">Task 4: Update Web App to use API Management Endpoints</h3>
+<p>In this task, you use the Azure Cloud Shell and Azure CLI to update the <code>ApiUrl</code> and <code>PolicyDocumentsPath</code> settings for the PolicyConnect Web App. You also add a new setting for the APIM access key.</p>
+<ol>
+<li>
+<p>In the <a href="https://portal.azure.com">Azure portal</a>, select the Azure Cloud Shell icon from the menu at the top right of the screen.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-icon.png" alt="The Azure Cloud Shell icon is highlighted in the Azure portal's top menu." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>In the Cloud Shell window that opens at the bottom of your browser window, select <strong>PowerShell</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-select-powershell.png" alt="In the Welcome to Azure Cloud Shell window, PowerShell is highlighted." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>After a moment, you receive a message that you have successfully requested a Cloud Shell, and be presented with a PS Azure prompt.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/cloud-shell-ps-azure-prompt.png" alt="In the Azure Cloud Shell dialog, a message is displayed that requesting a Cloud Shell succeeded, and the PS Azure prompt is displayed." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>At the Cloud Shell prompt, run the following command to retrieve your Web App name, making sure to replace <code>&lt;your-resource-group-name&gt;</code> with your resource group name:</p>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$resourceGroup</span> = <span class="hljs-string">&quot;&lt;your-resource-group-name&gt;&quot;</span>
+az webapp list <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-output</span> table
+</div></code></pre>
+</li>
+<li>
+<p>In the output, copy the name of Web App (the resource name starts with contoso-<strong>web</strong>) into a text editor for use below.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/azure-cloud-shell-az-webapp-list-web-app-name.png" alt="The Web App Name value is highlighted in the output of the command above." title="Azure Cloud Shell"></p>
+</li>
+<li>
+<p>Next replace the tokenized values in the following command as specified below, and then run it from the Azure Cloud Shell command prompt.</p>
+<ul>
+<li><code>&lt;your-web-app-name&gt;</code>: Replace with your Web App name, which you copied in above.</li>
+<li><code>&lt;your-apim-gateway-url&gt;</code>: Replace with the Gateway URL of your API Management instance, which you can find on the Overview blade of the API Management Service in the Azure portal.</li>
+<li><code>&lt;your-apim-subscription-key&gt;</code>: Replace with the APIM <code>Ocp-Apim-Subscription-Key</code> value that you copied into a text editor above.</li>
+<li><code>&lt;your-apim-function-app-path&gt;</code>: Replace with path you copied for your Function App within API Management, that is to be used for the <code>PolicyDocumentsPath</code> setting.</li>
+</ul>
+<pre><code class="language-powershell"><div><span class="hljs-variable">$webAppName</span> = <span class="hljs-string">&quot;&lt;your-web-app-name&gt;&quot;</span>
+<span class="hljs-variable">$apimUrl</span> = <span class="hljs-string">&quot;&lt;your-apim-gateway-url&gt;&quot;</span>
+<span class="hljs-variable">$apimKey</span> = <span class="hljs-string">&quot;&lt;your-apim-subscription-key&gt;&quot;</span>
+<span class="hljs-variable">$policyDocsPath</span> = <span class="hljs-string">&quot;&lt;your-apim-function-app-path&gt;&quot;</span>
+az webapp config appsettings <span class="hljs-built_in">set</span> <span class="hljs-literal">-n</span> <span class="hljs-variable">$webAppName</span> <span class="hljs-literal">-g</span> <span class="hljs-variable">$resourceGroup</span> -<span class="hljs-literal">-settings</span> <span class="hljs-string">&quot;PolicyDocumentsPath=<span class="hljs-variable">$policyDocsPath</span>&quot;</span> <span class="hljs-string">&quot;ApiUrl=<span class="hljs-variable">$apimUrl</span>&quot;</span> <span class="hljs-string">&quot;ApimSubscriptionKey=<span class="hljs-variable">$apimKey</span>&quot;</span>
+</div></code></pre>
+</li>
+<li>
+<p>In the output, note the newly added and updated settings in your Web App's application settings. The settings were updated by the script above and triggered a restart of your web app.</p>
+</li>
+<li>
+<p>In a web browser, navigate to the Web app URL, and verify you still see data when you select one of the tabs.</p>
+</li>
+</ol>
+<h2 id="exercise-10-create-an-app-in-powerapps">Exercise 10: Create an app in PowerApps</h2>
+<p>Duration: 15 minutes</p>
+<p>Since creating mobile apps is a long development cycle, Contoso is interested in using PowerApps to create mobile applications to add functionality not currently offered by their app rapidly. In this scenario, they want to be able to edit the Policy lookup values (Silver, Gold, Platinum, etc.), which they are unable to do in the current app. In this task, you get them up and running with a new app created in PowerApps, which connects to the <code>ContosoInsurance</code> database and performs basic CRUD (Create, Read, Update, and Delete) operations against the Policies table.</p>
+<h3 id="task-1-sign-up-for-a-powerapps-account">Task 1: Sign up for a PowerApps account</h3>
+<ol>
+<li>
+<p>Go to <a href="https://web.powerapps.com">https://web.powerapps.com</a> and sign up for a new account, using the same account you have been using in Azure.</p>
+</li>
+<li>
+<p>You may receive an email asking you to verify your account request, with a link to continue the process.</p>
+</li>
+<li>
+<p>Download and install <strong>PowerApps Studio</strong> from the Microsoft store: <a href="https://www.microsoft.com/en-us/store/p/powerapps/9nblggh5z8f3">https://www.microsoft.com/en-us/store/p/powerapps/9nblggh5z8f3</a>.</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Note</strong>: If you are unable to install PowerApps on the LabVM, you can run install it on your local machine and run the steps for this exercise there.</p>
+</blockquote>
+<h3 id="task-2-create-new-sql-connection">Task 2: Create new SQL connection</h3>
+<ol>
+<li>
+<p>From the PowerApps website, expand the <strong>Data</strong> option from the left-hand navigation menu, then select <strong>Connections</strong>.</p>
+</li>
+<li>
+<p>Select the <strong>+ New connection</strong> button.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps-new-connection.png" alt="Connections is highlighted in the left-hand menu and the Create a connection button is highlighted." title="PowerApps Connections"></p>
+</li>
+<li>
+<p>Type <strong>SQL</strong> into the search box, and then select the SQL Server item in the list below.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps_create_connection.png" alt="In the New connection section, the search field is set to SQL. In the item list below, SQL Server is selected." title="PowerApps New Connection"></p>
+</li>
+<li>
+<p>Within the SQL Server connection dialog, enter the following:</p>
+<ul>
+<li><strong>Authentication Type</strong>: Select <strong>SQL Server Authentication</strong>.</li>
+<li><strong>SQL Server name</strong>: Enter the server name of your Azure SQL database. For example, <code>contosoinsurance-jjbp34uowoybc.database.windows.net</code>.</li>
+<li><strong>SQL Database name</strong>: Enter <strong>ContosoInsurance</strong></li>
+<li><strong>Username</strong>: Enter <strong>demouser</strong></li>
+<li><strong>Password</strong>: Enter <strong>Password.1!!</strong></li>
+</ul>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps_connection_sqlserver.png" alt="The SQL Server dialog box fields are completed." title="SQL Server dialog box"></p>
+</li>
+<li>
+<p>Select <strong>Create</strong>.</p>
+</li>
+</ol>
+<h3 id="task-3-create-a-new-app">Task 3: Create a new app</h3>
+<ol>
+<li>
+<p>Open the PowerApps Studio application you downloaded previously and sign in with your PowerApps account.</p>
+</li>
+<li>
+<p>Select <strong>New</strong> on the left-hand side and in the browser windows that opens confirm your country/region and select <strong>Get started</strong>.</p>
+</li>
+<li>
+<p>Then <strong>select the right arrow</strong> next to the <strong>Start with your data</strong> list.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps_new.png" alt="In the PowerApps Studio, the New button on the left is selected. The right arrow to the right of Create an app from your data is also selected." title="PowerApps Studio"></p>
+</li>
+<li>
+<p>Select the <strong>SQL Server connection</strong> you created in the previous task.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps_create_newapp.png" alt="PowerApps - New option from left-hand side highlighted, as well as previously-created SQL Server connection. " title="PowerApps Studio"></p>
+</li>
+<li>
+<p>Select the <strong>policies</strong> table from the Choose a table list.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps_select_table.png" alt="PowerApps - Previously-created Connection from the left-hand menu highlighted, as well as the Policies table. " title="PowerApps Studio"></p>
+</li>
+<li>
+<p>Select <strong>Connect</strong>.</p>
+</li>
+</ol>
+<h3 id="task-4-design-app">Task 4: Design app</h3>
+<ol>
+<li>
+<p>The new app is automatically created and displayed within the designer. Select the title for the first page (currently named [dbo].[Policies]) and edit the text in the field to read <strong>Policies</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps-update-app-title.png" alt="All of the Policy options display." title="Policies section"></p>
+</li>
+<li>
+<p>Select the <strong>DetailScreen1</strong> screen in the left-hand menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapp_select_detailsscreen.png" alt="On the Home tab, under Screens, DetailScreen1 is selected." title="DetailScreen"></p>
+</li>
+<li>
+<p>Reorder the fields on the form by selecting them, then dragging them by the <strong>Card: &lt;field_name&gt;</strong> tag to the desired location. The new order should be <strong>Name</strong>, <strong>Description</strong>, <strong>DefaultDeductible</strong>, then <strong>DefaultOutOfPocketMax</strong>.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapp_reorder_fields.png" alt="In the dbo.policies window, the new order of the fields displays." title="dbo.policies window"></p>
+</li>
+<li>
+<p>On the form, edit the <strong>DefaultDeductible</strong> and <strong>DefaultOutOfPocketMax</strong> labels to be <strong>Default Deductible</strong> and <strong>Default Out of Pocket Max</strong>, respectively. To do so, select the field and type the new title in quotes within the formula field.</p>
+<blockquote>
+<p><strong>Hint</strong>: You need to select <strong>Unlock</strong> in order to change fields.</p>
+</blockquote>
+</li>
+<li>
+<p>Rename the screen title to Policy by typing &quot;Policy&quot; in quotation marks within the formula field.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapp_update_fields_names.png" alt="The formula field is set to &quot;Policy&quot;." title="Formula field"></p>
+</li>
+<li>
+<p>Select EditScreen on the left-hand menu.</p>
+</li>
+<li>
+<p>Repeat steps 4-6 on the edit screen.</p>
+</li>
+</ol>
+<h3 id="task-5-edit-the-app-settings-and-run-the-app">Task 5: Edit the app settings and run the app</h3>
+<ol>
+<li>
+<p>Select <strong>File</strong> on the top menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/power-apps-file-menu.png" alt="The File menu is highlighted in the PowerApps page." title="Power Apps"></p>
+</li>
+<li>
+<p>Select <strong>Name + icon</strong> under Settings and enter in a new <strong>Name</strong>, such as &quot;PolicyConnect Plus&quot;.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps-settings-name-icon.png" alt="In PowerShell App Studio, under Settings, Name + icon is selected, and the Name is set to PolicyConnectPlus." title="PowerShell App Studio"></p>
+</li>
+<li>
+<p>Select <strong>Save</strong> on the left-hand menu to save the app to the cloud, then select the <strong>Save</strong> button below.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapps-save.png" alt="The Save menu is highlighted on the left-hand menu and the Save button is highlighted on the Save form." title="Save App"></p>
+</li>
+<li>
+<p>After saving, select the left arrow on top of the left-hand menu.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapp_save_app.png" alt="The left arrow on top of the left-hand menu highlighted. " title="PowerShell App Studio"></p>
+</li>
+<li>
+<p>Select <strong>BrowseScreen1</strong> from the left-hand menu and then select the <strong>Run</strong> button on the top menu to preview the app. You should be able to view the current policies, edit their values, and create new policies.</p>
+<p><img src="file:////home/quintindk/microsoft/app-mod-2021/Hands-on lab/media/powerapp_run_app.png" alt="The Run button is highlighted in the toolbar." title="PowerShell App Studio"></p>
+</li>
+<li>
+<p>Browse through the various policies in the app to explore the functionality.</p>
+</li>
+</ol>
+<h2 id="after-the-hands-on-lab">After the hands-on lab</h2>
+<p>Duration: 10 minutes</p>
+<p>In this exercise, you de-provision all Azure resources that were created in support of this hands-on lab.</p>
+<h3 id="task-1-delete-azure-resource-groups">Task 1: Delete Azure resource groups</h3>
+<ol>
+<li>In the Azure portal, select <strong>Resource groups</strong> from the Azure services list, and locate and delete the <strong>hands-on-lab-SUFFIX</strong> following resource group.</li>
+</ol>
+<h3 id="task-2-delete-the-contoso-apps-service-principal">Task 2: Delete the contoso-apps service principal</h3>
+<ol>
+<li>In the Azure portal, select <strong>Azure Active Directory</strong> and then select <strong>App registrations</strong>.</li>
+<li>Select the <strong>contoso-apps</strong> application, and select <strong>Delete</strong> on the application blade.</li>
+</ol>
+<p>You should follow all steps provided <em>after</em> attending the Hands-on lab.</p>
+
+    </body>
+    </html>
